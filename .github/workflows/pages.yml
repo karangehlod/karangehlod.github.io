@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - work
   workflow_dispatch:
 
 permissions:
@@ -43,10 +42,7 @@ jobs:
       - name: Build Tailwind CSS
         run: npm run build:css
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload static site artifact
+      - name: Upload site to Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: public
