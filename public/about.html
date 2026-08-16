@@ -94,9 +94,14 @@
       <!-- Avatar / identity card -->
       <aside class="lg:col-span-1 reveal">
         <div class="sticky top-24">
-          <div class="w-28 h-28 rounded-3xl gradient-bg grid place-items-center mb-6
-                      shadow-2xl shadow-indigo-500/30">
-            <span class="text-4xl font-black text-white">KG</span>
+          <div class="relative w-32 h-32 mb-6">
+            <div class="absolute inset-0 rounded-3xl gradient-bg opacity-60 blur-xl scale-110"
+                 aria-hidden="true"></div>
+            <img src="./profile_image.png"
+                 alt="Karan Gehlod"
+                 width="128" height="128"
+                 class="relative w-32 h-32 rounded-3xl object-cover
+                        ring-2 ring-indigo-500/40 shadow-2xl shadow-indigo-500/30" />
           </div>
           <h2 id="bio-heading" class="text-2xl font-bold text-slate-100 mb-1">
             Karan Gehlod

@@ -273,8 +273,20 @@
         </a>
       </div>
 
-      <!-- Focus areas grid -->
-      <div class="grid grid-cols-2 gap-4 reveal">
+      <!-- Profile photo + focus areas -->
+      <div class="reveal">
+        <div class="relative mb-8">
+          <div class="absolute inset-0 gradient-bg opacity-20 blur-3xl rounded-full scale-75"
+               aria-hidden="true"></div>
+          <img src="./profile_image.png"
+               alt="Karan Gehlod"
+               width="200" height="200"
+               loading="lazy"
+               class="relative w-40 h-40 sm:w-48 sm:h-48 rounded-3xl object-cover
+                      ring-2 ring-indigo-500/30 shadow-2xl shadow-indigo-500/20" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
 
         <div class="group p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]
                     hover:bg-indigo-500/8 hover:border-indigo-500/25 transition-all duration-300">
@@ -327,6 +339,7 @@
           <p class="text-xs text-slate-500 leading-relaxed">Financial education applications with AI-driven insights</p>
         </div>
 
+        </div><!-- end grid -->
       </div>
     </div>
   </section>
