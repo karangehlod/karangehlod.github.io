@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build artifacts (generated at deploy time by CI)
+public/styles.css
+public/projects.json
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln

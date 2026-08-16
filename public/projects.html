@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Projects — Karan Gehlod</title>
+  <meta name="description" content="All public GitHub repositories — discovered live from the GitHub API." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-bg-base min-h-screen">
+
+  <!-- ══ Navigation ════════════════════════════════════════════ -->
+  <nav id="main-nav"
+       class="fixed inset-x-0 top-0 z-50 h-16 flex items-center
+              border-b border-transparent transition-all duration-300"
+       aria-label="Site navigation">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8
+                flex items-center justify-between">
+
+      <a href="./index.html" class="flex items-center gap-2.5" aria-label="Home">
+        <span class="gradient-bg w-9 h-9 rounded-[10px] grid place-items-center
+                     text-[0.7rem] font-black text-white tracking-wide flex-shrink-0"
+              aria-hidden="true">KG</span>
+        <span class="text-sm font-semibold text-slate-100">Karan Gehlod</span>
+      </a>
+
+      <ul class="flex items-center gap-1" role="list">
+        <li>
+          <a href="./about.html"
+             class="px-3.5 py-2 rounded-full text-sm font-medium text-slate-400
+                    hover:text-slate-100 hover:bg-white/5 transition-colors">
+            About
+          </a>
+        </li>
+        <li>
+          <a href="./projects.html"
+             class="px-3.5 py-2 rounded-full text-sm font-medium text-indigo-400
+                    bg-indigo-500/8 border border-indigo-500/20">
+            Projects
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/karangehlod"
+             target="_blank" rel="noopener noreferrer"
+             class="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium
+                    text-slate-100 border border-indigo-500/20
+                    hover:border-indigo-500/50 hover:bg-indigo-500/10 hover:text-indigo-300
+                    transition-all duration-200">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+            GitHub
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+
+  <!-- ══ Page Hero ══════════════════════════════════════════════ -->
+  <section class="relative pt-40 pb-20 overflow-hidden" aria-labelledby="projects-heading">
+    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+      <div class="hero-blob w-[600px] h-[600px] bg-indigo-600/20 -top-40 -left-28
+                  animate-blob"></div>
+      <div class="hero-blob w-[400px] h-[400px] bg-sky-600/15 top-0 right-0
+                  animate-blob-slow" style="animation-delay:-7s"></div>
+      <div class="dot-grid"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <p class="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-3
+                animate-fade-up-1">
+        Open source
+      </p>
+      <h1 id="projects-heading"
+          class="text-5xl sm:text-7xl font-black tracking-tight leading-none mb-6
+                 animate-fade-up-2">
+        <span class="text-slate-100">All</span>
+        <span class="gradient-text"> Projects</span>
+      </h1>
+      <p class="text-xl text-slate-400 leading-relaxed max-w-2xl animate-fade-up-3">
+        Every public repository — discovered live from the GitHub API at each build.
+        No stale lists, no manual curation of existence.
+      </p>
+
+      <!-- Live stats pills -->
+      <div class="flex flex-wrap gap-3 mt-8 animate-fade-up-4">
+        <span class="flex items-center gap-2 px-4 py-2 rounded-full text-sm
+                     bg-white/[0.04] border border-white/[0.07] text-slate-300">
+          <span class="live-dot"></span>
+          Live GitHub sync
+        </span>
+        <span class="px-4 py-2 rounded-full text-sm bg-white/[0.04]
+                     border border-white/[0.07] text-slate-400">
+          <span id="stat-repos-hero" class="font-bold text-slate-100">—</span> repositories
+        </span>
+        <span class="px-4 py-2 rounded-full text-sm bg-white/[0.04]
+                     border border-white/[0.07] text-slate-400">
+          <span id="stat-langs-hero" class="font-bold text-slate-100">—</span> languages
+        </span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══ Featured projects ══════════════════════════════════════ -->
+  <section class="py-16 border-t border-white/[0.04]" aria-labelledby="featured-heading">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <header class="flex items-end justify-between mb-10 reveal">
+        <div>
+          <p class="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-2">
+            Highlighted work
+          </p>
+          <h2 id="featured-heading"
+              class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+            Featured
+          </h2>
+        </div>
+        <span class="text-sm text-slate-500 hidden sm:block">
+          Curated from current public repositories
+        </span>
+      </header>
+
+      <div id="featured-grid"
+           class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8"
+           aria-live="polite" aria-label="Featured projects">
+        <div class="skeleton h-56" aria-hidden="true"></div>
+        <div class="skeleton h-56" aria-hidden="true"></div>
+        <div class="skeleton h-56" aria-hidden="true"></div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══ All repos ══════════════════════════════════════════════ -->
+  <section class="py-16 border-t border-white/[0.04]" aria-labelledby="all-heading">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <header class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 reveal">
+        <div>
+          <p class="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-2">
+            Complete list
+          </p>
+          <h2 id="all-heading"
+              class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+            All repositories
+          </h2>
+        </div>
+      </header>
+
+      <!-- Language filter -->
+      <nav id="lang-filter"
+           class="flex flex-wrap gap-2 mb-8"
+           aria-label="Filter by programming language">
+        <!-- Built by JS -->
+      </nav>
+
+      <div id="all-grid"
+           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+           aria-live="polite" aria-label="All repositories">
+        <div class="skeleton h-48" aria-hidden="true"></div>
+        <div class="skeleton h-48" aria-hidden="true"></div>
+        <div class="skeleton h-48" aria-hidden="true"></div>
+        <div class="skeleton h-48" aria-hidden="true"></div>
+        <div class="skeleton h-48" aria-hidden="true"></div>
+        <div class="skeleton h-48" aria-hidden="true"></div>
+        <div class="skeleton h-48" aria-hidden="true"></div>
+        <div class="skeleton h-48" aria-hidden="true"></div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══ Footer ════════════════════════════════════════════════ -->
+  <footer class="border-t border-white/[0.04] bg-bg-surface py-10" role="contentinfo">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8
+                flex flex-col sm:flex-row items-start sm:items-center
+                justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <span class="gradient-bg w-8 h-8 rounded-[9px] grid place-items-center
+                     text-[0.65rem] font-black text-white tracking-wide flex-shrink-0"
+              aria-hidden="true">KG</span>
+        <p class="text-xs text-slate-600 max-w-sm leading-relaxed">
+          Built with GitHub Pages. Projects sourced live from the GitHub API at each deployment.
+        </p>
+      </div>
+      <nav class="flex gap-6" aria-label="Footer links">
+        <a href="./index.html"
+           class="text-xs text-slate-600 hover:text-indigo-400 transition-colors">Home</a>
+        <a href="./about.html"
+           class="text-xs text-slate-600 hover:text-indigo-400 transition-colors">About</a>
+        <a href="https://github.com/karangehlod/karangehlod.github.io"
+           target="_blank" rel="noopener noreferrer"
+           class="text-xs text-slate-600 hover:text-indigo-400 transition-colors">Source</a>
+        <a href="https://github.com/karangehlod"
+           target="_blank" rel="noopener noreferrer"
+           class="text-xs text-slate-600 hover:text-indigo-400 transition-colors">GitHub</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script type="module" src="./site.js"></script>
+</body>
+</html>

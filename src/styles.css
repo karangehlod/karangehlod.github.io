@@ -1,0 +1,287 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Global base overrides ──────────────────────────────────── */
+@layer base {
+  :root {
+    --grad:           linear-gradient(135deg, #6366f1 0%, #38bdf8 100%);
+    --grad-text:      linear-gradient(135deg, #a5b4fc 0%, #7dd3fc 100%);
+    --bdr-faint:      rgba(99,102,241,0.07);
+    --bdr-base:       rgba(99,102,241,0.14);
+    --bdr-accent:     rgba(99,102,241,0.48);
+    --shadow-card:    0 2px 12px rgba(0,0,0,0.40);
+    --shadow-hover:   0 18px 52px rgba(99,102,241,0.14), 0 4px 20px rgba(0,0,0,0.50);
+    --ease-out:       cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);
+    --nav-h:          64px;
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  body {
+    background-color: #020817;
+    color: #f0f4ff;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Focus ring */
+  :focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+/* ─── Shared layout utilities ────────────────────────────────── */
+@layer utilities {
+  .gradient-text {
+    background: var(--grad-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-bg {
+    background: var(--grad);
+  }
+
+  .border-faint   { border-color: var(--bdr-faint); }
+  .border-base    { border-color: var(--bdr-base); }
+  .border-accent  { border-color: var(--bdr-accent); }
+}
+
+/* ─── Component classes (used by JS-generated HTML) ─────────── */
+@layer components {
+
+  /* ── Nav ── */
+  .nav-scrolled {
+    background: rgba(2,8,23,0.90);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border-bottom-color: var(--bdr-faint);
+  }
+
+  /* ── Gradient pill label ── */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 1rem;
+    border-radius: 999px;
+    color: #818cf8;
+    border: 1px solid rgba(99,102,241,0.20);
+    background-color: rgba(99,102,241,0.08);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Hero dot ── */
+  .hero-dot {
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background-color: #818cf8;
+    flex-shrink: 0;
+    animation: dot-pulse 2.5s ease-in-out infinite;
+  }
+
+  /* ── Hero scroll indicator ── */
+  .scroll-bar {
+    width: 1px;
+    background: linear-gradient(to bottom, #64748b, transparent);
+    height: clamp(32px, 4vh, 48px);
+    transform-origin: top;
+    animation: scroll-pulse 2.3s ease-in-out infinite;
+  }
+
+  /* ── Stats live dot ── */
+  .live-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: #34d399;
+    flex-shrink: 0;
+    box-shadow: 0 0 10px rgba(52,211,153,0.55);
+    animation: live-glow 2.2s ease-in-out infinite;
+  }
+
+  /* ── Project card ── */
+  .project-card {
+    position: relative;
+    border: 1px solid var(--bdr-base);
+    border-radius: 1.25rem;
+    background: rgba(9,16,38,0.88);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    opacity: 0;
+    transition: border-color 0.30s var(--ease-out),
+                box-shadow   0.30s var(--ease-out),
+                background   0.30s var(--ease-out),
+                transform    0.30s var(--ease-out);
+    will-change: transform;
+  }
+
+  .project-card.project-card--featured::before {
+    content: '';
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    height: 2px;
+    background: var(--grad);
+    opacity: 0.75;
+  }
+
+  .project-card.card-visible {
+    animation: card-enter 0.55s var(--ease-out) both;
+  }
+
+  .project-card.card-visible[data-i="1"] { animation-delay:  55ms; }
+  .project-card.card-visible[data-i="2"] { animation-delay: 110ms; }
+  .project-card.card-visible[data-i="3"] { animation-delay: 165ms; }
+  .project-card.card-visible[data-i="4"] { animation-delay: 220ms; }
+  .project-card.card-visible[data-i="5"] { animation-delay: 275ms; }
+  .project-card.card-visible[data-i="6"] { animation-delay: 330ms; }
+  .project-card.card-visible[data-i="7"] { animation-delay: 385ms; }
+  .project-card.card-visible[data-i="8"] { animation-delay: 440ms; }
+
+  .project-card:hover {
+    border-color: var(--bdr-accent);
+    background: rgba(14,24,52,0.96);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-6px);
+  }
+
+  /* ── Card icon ── */
+  .card-icon {
+    width: clamp(32px, 4vw, 40px);
+    height: clamp(32px, 4vw, 40px);
+    border-radius: 10px;
+    background: var(--grad);
+    display: grid;
+    place-items: center;
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: #fff;
+    flex-shrink: 0;
+    transition: transform 0.25s var(--ease-spring);
+  }
+  .project-card:hover .card-icon {
+    transform: scale(1.1) rotate(-4deg);
+  }
+
+  /* ── Card footer link ── */
+  .card-view-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #818cf8;
+    white-space: nowrap;
+    flex-shrink: 0;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.25s var(--ease-out),
+                transform 0.25s var(--ease-out),
+                color 0.15s;
+  }
+  .project-card:hover .card-view-link {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .card-view-link:hover { color: #38bdf8; }
+
+  /* ── Skeleton ── */
+  .skeleton {
+    border: 1px solid var(--bdr-faint);
+    border-radius: 1.25rem;
+    background: linear-gradient(
+      90deg,
+      rgba(255,255,255,.025)   0px,
+      rgba(255,255,255,.055) 160px,
+      rgba(255,255,255,.025) 320px
+    );
+    background-size: 640px 100%;
+    animation: shimmer 1.6s linear infinite;
+  }
+
+  /* ── Skill card (about page) ── */
+  .skill-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background-color: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+  }
+  .skill-card:hover {
+    background-color: rgba(99,102,241,0.10);
+    border-color: rgba(99,102,241,0.30);
+    transform: translateY(-2px);
+  }
+}
+
+/* ─── Blob background (too complex for Tailwind utilities) ───── */
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.45;
+  animation: blob-drift 12s ease-in-out infinite;
+}
+
+/* ─── Dot grid ───────────────────────────────────────────────── */
+.dot-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(148,163,184,.11) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 75% 60% at 50% 45%, black, transparent);
+  -webkit-mask-image: radial-gradient(ellipse 75% 60% at 50% 45%, black, transparent);
+}
+
+/* ─── Section reveal animation (Intersection Observer) ───────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-out);
+}
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+  .project-card { opacity: 1 !important; }
+  .project-card.card-visible {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
