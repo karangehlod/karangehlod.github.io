@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Karangehlod Projects</title>
+    <meta name="description" content="Live public GitHub projects for karangehlod." />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="hero" aria-labelledby="site-title">
+        <p class="eyebrow">karangehlod.github.io</p>
+        <h1 id="site-title">Karangehlod Projects</h1>
+        <p>
+          This page is published with GitHub Pages and displays only repositories
+          that GitHub currently exposes as public for <strong>karangehlod</strong>.
+        </p>
+        <a class="button" href="https://github.com/karangehlod">View GitHub profile</a>
+      </section>
+
+      <section aria-labelledby="featured-title">
+        <div class="section-heading">
+          <p class="eyebrow">Live discovery</p>
+          <h2 id="featured-title">Featured public repositories</h2>
+        </div>
+        <div id="featured-projects" class="project-grid" aria-live="polite"></div>
+      </section>
+
+      <section aria-labelledby="all-title">
+        <div class="section-heading">
+          <p class="eyebrow">Current public source of truth</p>
+          <h2 id="all-title">All discovered repositories</h2>
+        </div>
+        <div id="all-projects" class="project-grid" aria-live="polite"></div>
+      </section>
+    </main>
+    <script type="module" src="./site.js"></script>
+  </body>
+</html>
