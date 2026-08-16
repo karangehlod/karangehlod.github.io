@@ -314,26 +314,35 @@ class StatsController {
     const langCount = new Set(projects.map(p => p.language).filter(Boolean)).size;
     const starTotal = projects.reduce((s, p) => s + (p.stars ?? 0), 0);
 
-    // Populate any stats elements that exist on this page
     const targets = [
       { ids: ['stat-repos', 'stat-repos-hero'], value: projects.length },
       { ids: ['stat-langs', 'stat-langs-hero'], value: langCount },
       { ids: ['stat-stars'],                    value: starTotal },
     ];
 
-    const band = document.querySelector('.bg-bg-surface') ?? document.body;
-    const observer = new IntersectionObserver(entries => {
-      if (!entries[0].isIntersecting) return;
-      observer.disconnect();
+    const runCounters = () => {
       for (const { ids, value } of targets) {
         for (const id of ids) {
           const el = document.getElementById(id);
           if (el) this.#countUp(el, value);
         }
       }
-    }, { threshold: CONFIG.STATS_THRESHOLD });
+    };
 
-    observer.observe(band);
+    // Watch the first stat element — it's always visible on page load.
+    // Fall back to running immediately if no stat elements exist on this page.
+    const firstStatId = targets.flatMap(t => t.ids).find(id => document.getElementById(id));
+    const anchor = firstStatId ? document.getElementById(firstStatId) : null;
+
+    if (!anchor) return; // no stats on this page
+
+    const observer = new IntersectionObserver(entries => {
+      if (!entries[0].isIntersecting) return;
+      observer.disconnect();
+      runCounters();
+    }, { threshold: 0.1 });
+
+    observer.observe(anchor);
   }
 
   #countUp(el, target) {

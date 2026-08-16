@@ -57,8 +57,8 @@
   </nav>
 
 
-  <!-- ══ Page Hero ══════════════════════════════════════════════ -->
-  <section class="relative pt-40 pb-20 overflow-hidden" aria-labelledby="about-heading">
+  <!-- ══ Page Hero — photo + heading side by side ══════════════ -->
+  <section class="relative pt-32 pb-16 overflow-hidden" aria-labelledby="about-heading">
     <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
       <div class="hero-blob w-[500px] h-[500px] bg-indigo-600/20 -top-32 -right-24
                   animate-blob"></div>
@@ -67,64 +67,70 @@
       <div class="dot-grid"></div>
     </div>
 
-    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <p class="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-3
-                animate-fade-up-1">
-        Who I am
-      </p>
-      <h1 id="about-heading"
-          class="text-5xl sm:text-7xl font-black tracking-tight leading-none mb-8
-                 animate-fade-up-2">
-        <span class="text-slate-100">About</span><br/>
-        <span class="gradient-text">Me</span>
-      </h1>
-      <p class="text-xl text-slate-400 leading-relaxed max-w-2xl animate-fade-up-3">
-        AI engineer focused on building intelligent systems that actually work in production —
-        not just in research notebooks.
-      </p>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+        <!-- Profile photo + identity (left column) -->
+        <div class="animate-fade-up-1">
+          <div class="flex items-center gap-6 mb-6">
+            <div class="relative flex-shrink-0">
+              <div class="absolute inset-0 rounded-3xl gradient-bg opacity-50 blur-2xl scale-110"
+                   aria-hidden="true"></div>
+              <img src="./profile_image.png"
+                   alt="Karan Gehlod"
+                   width="160" height="160"
+                   class="relative w-36 h-36 sm:w-44 sm:h-44 rounded-3xl object-cover
+                          ring-2 ring-indigo-500/40 shadow-2xl shadow-indigo-500/25" />
+            </div>
+            <div>
+              <h2 id="bio-heading" class="text-2xl sm:text-3xl font-extrabold text-slate-100 mb-1">
+                Karan Gehlod
+              </h2>
+              <p class="text-indigo-400 font-semibold text-sm mb-3">AI Engineer</p>
+              <a href="https://github.com/karangehlod"
+                 target="_blank" rel="noopener noreferrer"
+                 class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium
+                        bg-white/[0.04] border border-white/[0.08]
+                        hover:bg-indigo-500/10 hover:border-indigo-500/30 hover:text-slate-100
+                        text-slate-400 transition-all duration-200">
+                <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                </svg>
+                github.com/karangehlod
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Heading + subtitle (right column) -->
+        <div>
+          <p class="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-3
+                    animate-fade-up-1">
+            Who I am
+          </p>
+          <h1 id="about-heading"
+              class="text-5xl sm:text-7xl font-black tracking-tight leading-none mb-6
+                     animate-fade-up-2">
+            <span class="text-slate-100">About</span><br/>
+            <span class="gradient-text">Me</span>
+          </h1>
+          <p class="text-lg text-slate-400 leading-relaxed animate-fade-up-3">
+            AI engineer focused on building intelligent systems that actually work
+            in production — not just in research notebooks.
+          </p>
+        </div>
+
+      </div>
     </div>
   </section>
 
 
   <!-- ══ Main Bio ═══════════════════════════════════════════════ -->
   <section class="py-16" aria-labelledby="bio-heading">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8
-                grid grid-cols-1 lg:grid-cols-3 gap-16">
-
-      <!-- Avatar / identity card -->
-      <aside class="lg:col-span-1 reveal">
-        <div class="sticky top-24">
-          <div class="relative w-32 h-32 mb-6">
-            <div class="absolute inset-0 rounded-3xl gradient-bg opacity-60 blur-xl scale-110"
-                 aria-hidden="true"></div>
-            <img src="./profile_image.png"
-                 alt="Karan Gehlod"
-                 width="128" height="128"
-                 class="relative w-32 h-32 rounded-3xl object-cover
-                        ring-2 ring-indigo-500/40 shadow-2xl shadow-indigo-500/30" />
-          </div>
-          <h2 id="bio-heading" class="text-2xl font-bold text-slate-100 mb-1">
-            Karan Gehlod
-          </h2>
-          <p class="text-indigo-400 font-medium text-sm mb-6">AI Engineer</p>
-
-          <div class="space-y-3">
-            <a href="https://github.com/karangehlod"
-               target="_blank" rel="noopener noreferrer"
-               class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]
-                      hover:bg-indigo-500/10 hover:border-indigo-500/30 transition-all duration-200
-                      text-slate-400 hover:text-slate-100 text-sm font-medium">
-              <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-              </svg>
-              github.com/karangehlod
-            </a>
-          </div>
-        </div>
-      </aside>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
       <!-- Bio text -->
-      <div class="lg:col-span-2 space-y-8 reveal">
+      <div class="space-y-8 reveal">
         <div class="space-y-5 text-slate-400 text-lg leading-relaxed">
           <p>
             I'm an AI engineer specializing in the design and deployment of intelligent
