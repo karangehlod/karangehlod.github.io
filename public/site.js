@@ -259,7 +259,10 @@ class ProjectRepository {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ScrollAnimator  — SRP: IntersectionObserver for card entrances
+   ScrollAnimator  — SRP: staggered card entrance animations
+   Uses IntersectionObserver for cards below the fold; forces
+   immediate visibility for cards already in the viewport so they
+   never stay hidden due to observer timing edge-cases.
 ═══════════════════════════════════════════════════════════════ */
 
 class ScrollAnimator {
@@ -272,12 +275,29 @@ class ScrollAnimator {
         }
       }
     },
-    { threshold: CONFIG.OBSERVER_THRESHOLD, rootMargin: CONFIG.OBSERVER_MARGIN }
+    { threshold: 0.01, rootMargin: '0px' }
   );
 
   /** @param {Iterable<Element>} elements */
   watch(elements) {
-    for (const el of elements) this.#observer.observe(el);
+    const list = [...elements];
+
+    // After layout settles, check each card. Cards already in the
+    // viewport get an immediate staggered show; off-screen cards
+    // rely on the IntersectionObserver as they scroll into view.
+    requestAnimationFrame(() => {
+      const vpBottom = window.innerHeight;
+      list.forEach((card, i) => {
+        const rect = card.getBoundingClientRect();
+        if (rect.top < vpBottom) {
+          // In viewport — show with staggered delay
+          setTimeout(() => card.classList.add('card-visible'), i * CONFIG.STAGGER_STEP_MS);
+        } else {
+          // Below fold — let IntersectionObserver handle it
+          this.#observer.observe(card);
+        }
+      });
+    });
   }
 }
 
