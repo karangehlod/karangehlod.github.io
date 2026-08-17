@@ -1,0 +1,12 @@
+services:
+  portfolio:
+    build:
+      context: .
+      args:
+        # Pass your GitHub token to raise the API rate limit during build.
+        # Run: GITHUB_TOKEN=ghp_yourtoken docker compose up --build
+        # Without it, the build still works (anonymous rate limit: 60 req/hour).
+        GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+    ports:
+      - "3000:80"
+    restart: unless-stopped

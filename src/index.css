@@ -87,12 +87,18 @@ html.light {
 /* ─── Components ────────────────────────────────────────────── */
 @layer components {
 
-  /* Nav backdrop */
+  /* Nav backdrop — adapts to theme */
   .nav-scrolled {
     background: rgba(2,8,23,0.90);
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
     border-bottom-color: var(--bdr-faint);
+  }
+  html.light .nav-scrolled {
+    background: rgba(245,247,255,0.92);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border-bottom-color: rgba(99,102,241,0.12);
   }
 
   /* Hero background blobs */

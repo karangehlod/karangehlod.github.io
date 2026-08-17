@@ -105,7 +105,7 @@ export default function Home() {
           <h1 id="hero-heading"
               className="text-[clamp(3.5rem,11vw,8.5rem)] font-black leading-[0.92]
                          tracking-tight mb-6 animate-fade-up-2">
-            <span className="block text-slate-100">Karan</span>
+            <span className="block gradient-text">Karan</span>
             <span className="block gradient-text">Gehlod</span>
           </h1>
 

@@ -70,8 +70,11 @@ export function Nav() {
         to={to}
         className={`px-3.5 py-2 rounded-full text-sm font-medium transition-colors
           ${pathname === to
-            ? 'text-indigo-400 bg-indigo-500/[0.08] border border-indigo-500/20'
-            : 'text-slate-400 hover:text-slate-100 hover:bg-white/5'}`}
+            ? 'text-indigo-500 border border-indigo-500/30'
+            : 'hover:bg-black/[0.04] hover:text-indigo-500'}`}
+        style={pathname === to
+          ? { background: 'rgba(99,102,241,0.09)', color: '#6366f1' }
+          : { color: 'var(--c-text2)' }}
       >
         {label}
       </Link>
