@@ -39,13 +39,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Build Tailwind CSS
-        run: npm run build:css
+      - name: Build content from profile.md
+        run: npm run build:content
 
-      - name: Upload site to Pages
+      - name: Build React app
+        run: npx tsc -b && npx vite build
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: public
+          path: dist
 
   deploy:
     environment:

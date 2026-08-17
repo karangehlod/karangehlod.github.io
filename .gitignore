@@ -2,8 +2,11 @@
 node_modules/
 
 # Build artifacts (generated at deploy time by CI)
-public/styles.css
 public/projects.json
+public/content.json
+public/publications.json
+dist/
+*.tsbuildinfo
 
 # macOS
 .DS_Store
