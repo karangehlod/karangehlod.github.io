@@ -288,6 +288,43 @@
   transform: translateY(0);
 }
 
+/* ─── Light mode overrides ───────────────────────────────────── */
+html.light .project-card {
+  background: rgba(255,255,255,0.92);
+  border-color: rgba(99,102,241,0.18);
+}
+html.light .project-card:hover {
+  background: rgba(255,255,255,0.99);
+  border-color: rgba(99,102,241,0.45);
+}
+html.light .project-card .card-icon {
+  box-shadow: 0 2px 8px rgba(99,102,241,0.25);
+}
+html.light .skill-tag {
+  border-color: rgba(99,102,241,0.18);
+  background: rgba(99,102,241,0.06);
+  color: #475569;
+}
+html.light .skill-tag:hover {
+  border-color: rgba(99,102,241,0.35);
+  background: rgba(99,102,241,0.12);
+  color: #4338ca;
+}
+html.light .skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(99,102,241,.04)   0px,
+    rgba(99,102,241,.09) 160px,
+    rgba(99,102,241,.04) 320px
+  );
+  border-color: rgba(99,102,241,0.10);
+}
+html.light .nav-scrolled {
+  background: rgba(245,247,255,0.92);
+}
+html.light .text-indigo-400 { color: #4f46e5 !important; }
+html.light .text-indigo-300 { color: #4338ca !important; }
+
 /* ─── Reduced motion ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

@@ -100,7 +100,7 @@ export function useContent() {
   const [status, setStatus]   = useState<Status>('loading');
 
   useEffect(() => {
-    fetch('./content.json', { cache: 'no-store' })
+    fetch('./content.json')
       .then(r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json() as Promise<SiteContent>;
