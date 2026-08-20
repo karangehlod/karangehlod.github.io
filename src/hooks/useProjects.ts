@@ -8,7 +8,7 @@ export function useProjects() {
   const [status, setStatus] = useState<Status>('loading');
 
   useEffect(() => {
-    fetch('./projects.json', { cache: 'no-store' })
+    fetch('./projects.json')
       .then(r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json() as Promise<ProjectDataset>;

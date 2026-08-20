@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2026-08-20T08:58:00.119Z",
+  "contributions": [
+    {
+      "id": 5192939834,
+      "number": 17,
+      "title": "feat: add Atlassian Cloud API token authentication",
+      "url": "https://github.com/Toyota/confluence2md/pull/17",
+      "repo": "Toyota/confluence2md",
+      "repoUrl": "https://github.com/Toyota/confluence2md",
+      "mergedAt": "2026-08-19T14:43:02Z",
+      "labels": [],
+      "stars": 66,
+      "language": "Rust"
+    },
+    {
+      "id": 4628448676,
+      "number": 7,
+      "title": "GitHub ci workflow",
+      "url": "https://github.com/Toyota/confluence2md/pull/7",
+      "repo": "Toyota/confluence2md",
+      "repoUrl": "https://github.com/Toyota/confluence2md",
+      "mergedAt": "2026-06-11T22:09:54Z",
+      "labels": [],
+      "stars": 66,
+      "language": "Rust"
+    }
+  ],
+  "total": 2
+}

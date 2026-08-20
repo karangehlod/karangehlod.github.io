@@ -69,32 +69,54 @@ function SocialLinks({ social }: { social: Social | undefined }) {
   );
 }
 
-/* ── Support cards ───────────────────────────────────────────── */
+/* ── Support / Connect band ──────────────────────────────────── */
 function SupportCards({ support }: { support: Support | undefined }) {
   if (!support) return null;
 
   return (
-    <div className="border-t py-10" style={{ background: 'var(--c-surf)', borderColor: 'var(--c-border-xs)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-6">Connect</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
+    <div className="border-t" style={{ background: 'var(--c-surf)', borderColor: 'var(--c-border-xs)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
 
+        {/* Heading row */}
+        <div className="text-center mb-10">
+          <p className="text-xs font-bold tracking-[0.14em] uppercase mb-2"
+             style={{ color: '#6366f1' }}>
+            Connect
+          </p>
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight"
+              style={{ color: 'var(--c-text1)' }}>
+            Let's work together
+          </h2>
+          <p className="mt-2 text-sm max-w-md mx-auto" style={{ color: 'var(--c-text3)' }}>
+            Available for consulting, collaboration, and open-source support.
+          </p>
+        </div>
+
+        {/* Cards — centered, max-w-2xl */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-2xl mx-auto">
+
+          {/* Schedule a call */}
           <a href={`https://cal.com/${support.cal}`}
              target="_blank" rel="noopener noreferrer"
-             className="group flex items-start gap-4 p-5 rounded-2xl border transition-all duration-300 hover:-translate-y-0.5"
+             className="group flex items-center gap-5 p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1"
              style={{ background: 'var(--c-card)', borderColor: 'var(--c-border)' }}
              onMouseEnter={e => {
                const el = e.currentTarget as HTMLElement;
-               el.style.borderColor = 'rgba(99,102,241,0.40)';
+               el.style.borderColor = 'rgba(99,102,241,0.45)';
+               el.style.boxShadow   = '0 8px 28px rgba(99,102,241,0.14)';
                el.style.background  = 'rgba(99,102,241,0.06)';
              }}
              onMouseLeave={e => {
                const el = e.currentTarget as HTMLElement;
                el.style.borderColor = 'var(--c-border)';
+               el.style.boxShadow   = '';
                el.style.background  = 'var(--c-card)';
              }}>
-            <div className="w-10 h-10 rounded-xl gradient-bg grid place-items-center flex-shrink-0">
-              <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className="w-12 h-12 rounded-2xl gradient-bg grid place-items-center flex-shrink-0
+                            shadow-lg group-hover:scale-110 transition-transform duration-300"
+                 style={{ boxShadow: '0 4px 16px rgba(99,102,241,0.30)' }}>
+              <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                 <line x1="16" y1="2" x2="16" y2="6"/>
                 <line x1="8" y1="2" x2="8" y2="6"/>
@@ -102,43 +124,57 @@ function SupportCards({ support }: { support: Support | undefined }) {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-semibold mb-0.5 group-hover:text-indigo-400 transition-colors"
+              <p className="font-semibold mb-0.5 group-hover:text-indigo-500 transition-colors"
                  style={{ color: 'var(--c-text1)' }}>
                 Schedule a Call
               </p>
               <p className="text-xs leading-relaxed" style={{ color: 'var(--c-text3)' }}>
                 30-min intro · consulting · collaboration
               </p>
+              <span className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-indigo-400">
+                Book on cal.com ↗
+              </span>
             </div>
           </a>
 
+          {/* Buy me a coffee */}
           <a href={`https://paypal.me/${support.paypal}`}
              target="_blank" rel="noopener noreferrer"
-             className="group flex items-start gap-4 p-5 rounded-2xl border transition-all duration-300 hover:-translate-y-0.5"
+             className="group flex items-center gap-5 p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1"
              style={{ background: 'var(--c-card)', borderColor: 'var(--c-border)' }}
              onMouseEnter={e => {
                const el = e.currentTarget as HTMLElement;
-               el.style.borderColor = 'rgba(251,191,36,0.40)';
-               el.style.background  = 'rgba(251,191,36,0.06)';
+               el.style.borderColor = 'rgba(251,191,36,0.45)';
+               el.style.boxShadow   = '0 8px 28px rgba(251,191,36,0.12)';
+               el.style.background  = 'rgba(251,146,36,0.05)';
              }}
              onMouseLeave={e => {
                const el = e.currentTarget as HTMLElement;
                el.style.borderColor = 'var(--c-border)';
+               el.style.boxShadow   = '';
                el.style.background  = 'var(--c-card)';
              }}>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 grid place-items-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-2xl grid place-items-center flex-shrink-0
+                            group-hover:scale-110 transition-transform duration-300"
+                 style={{
+                   background: 'linear-gradient(135deg,#fbbf24,#f97316)',
+                   boxShadow: '0 4px 16px rgba(251,191,36,0.30)',
+                 }}>
               <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
               </svg>
             </div>
             <div>
-              <p className="text-sm font-semibold mb-0.5 group-hover:text-amber-400 transition-colors"
+              <p className="font-semibold mb-0.5 group-hover:text-amber-500 transition-colors"
                  style={{ color: 'var(--c-text1)' }}>
                 Buy Me a Coffee
               </p>
               <p className="text-xs leading-relaxed" style={{ color: 'var(--c-text3)' }}>
-                Support open source work via PayPal
+                Support open-source work via PayPal
               </p>
+              <span className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-amber-500">
+                Support via PayPal ↗
+              </span>
             </div>
           </a>
 
