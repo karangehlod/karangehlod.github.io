@@ -92,8 +92,8 @@ function SupportCards({ support }: { support: Support | undefined }) {
           </p>
         </div>
 
-        {/* Cards — centered, max-w-2xl */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-2xl mx-auto">
+        {/* Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-4xl mx-auto">
 
           {/* Schedule a call */}
           <a href={`https://cal.com/${support.cal}`}
@@ -137,46 +137,95 @@ function SupportCards({ support }: { support: Support | undefined }) {
             </div>
           </a>
 
-          {/* Buy me a coffee */}
-          <a href={`https://paypal.me/${support.paypal}`}
-             target="_blank" rel="noopener noreferrer"
-             className="group flex items-center gap-5 p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1"
-             style={{ background: 'var(--c-card)', borderColor: 'var(--c-border)' }}
-             onMouseEnter={e => {
-               const el = e.currentTarget as HTMLElement;
-               el.style.borderColor = 'rgba(251,191,36,0.45)';
-               el.style.boxShadow   = '0 8px 28px rgba(251,191,36,0.12)';
-               el.style.background  = 'rgba(251,146,36,0.05)';
-             }}
-             onMouseLeave={e => {
-               const el = e.currentTarget as HTMLElement;
-               el.style.borderColor = 'var(--c-border)';
-               el.style.boxShadow   = '';
-               el.style.background  = 'var(--c-card)';
-             }}>
-            <div className="w-12 h-12 rounded-2xl grid place-items-center flex-shrink-0
-                            group-hover:scale-110 transition-transform duration-300"
-                 style={{
-                   background: 'linear-gradient(135deg,#fbbf24,#f97316)',
-                   boxShadow: '0 4px 16px rgba(251,191,36,0.30)',
-                 }}>
-              <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
-              </svg>
-            </div>
-            <div>
-              <p className="font-semibold mb-0.5 group-hover:text-amber-500 transition-colors"
-                 style={{ color: 'var(--c-text1)' }}>
-                Buy Me a Coffee
-              </p>
-              <p className="text-xs leading-relaxed" style={{ color: 'var(--c-text3)' }}>
-                Support open-source work via PayPal
-              </p>
-              <span className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-amber-500">
-                Support via PayPal ↗
-              </span>
-            </div>
-          </a>
+          {/* Buy Me a Coffee */}
+          {support.buy_me_a_coffee && (
+            <a href={`https://buymeacoffee.com/${support.buy_me_a_coffee}`}
+               target="_blank" rel="noopener noreferrer"
+               className="group flex items-center gap-5 p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1"
+               style={{ background: 'var(--c-card)', borderColor: 'var(--c-border)' }}
+               onMouseEnter={e => {
+                 const el = e.currentTarget as HTMLElement;
+                 el.style.borderColor = 'rgba(251,191,36,0.45)';
+                 el.style.boxShadow   = '0 8px 28px rgba(251,191,36,0.12)';
+                 el.style.background  = 'rgba(251,191,36,0.05)';
+               }}
+               onMouseLeave={e => {
+                 const el = e.currentTarget as HTMLElement;
+                 el.style.borderColor = 'var(--c-border)';
+                 el.style.boxShadow   = '';
+                 el.style.background  = 'var(--c-card)';
+               }}>
+              <div className="w-12 h-12 rounded-2xl grid place-items-center flex-shrink-0
+                              group-hover:scale-110 transition-transform duration-300"
+                   style={{
+                     background: 'linear-gradient(135deg,#fbbf24,#f59e0b)',
+                     boxShadow: '0 4px 16px rgba(251,191,36,0.30)',
+                   }}>
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+                  <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <line x1="6" y1="1" x2="6" y2="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="10" y1="1" x2="10" y2="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="14" y1="1" x2="14" y2="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <div>
+                <p className="font-semibold mb-0.5 group-hover:text-amber-400 transition-colors"
+                   style={{ color: 'var(--c-text1)' }}>
+                  Buy Me a Coffee
+                </p>
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--c-text3)' }}>
+                  Support open-source work
+                </p>
+                <span className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-amber-400">
+                  buymeacoffee.com ↗
+                </span>
+              </div>
+            </a>
+          )}
+
+          {/* PayPal */}
+          {support.paypal && (
+            <a href={`https://paypal.me/${support.paypal}`}
+               target="_blank" rel="noopener noreferrer"
+               className="group flex items-center gap-5 p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1"
+               style={{ background: 'var(--c-card)', borderColor: 'var(--c-border)' }}
+               onMouseEnter={e => {
+                 const el = e.currentTarget as HTMLElement;
+                 el.style.borderColor = 'rgba(0,112,186,0.45)';
+                 el.style.boxShadow   = '0 8px 28px rgba(0,112,186,0.12)';
+                 el.style.background  = 'rgba(0,112,186,0.05)';
+               }}
+               onMouseLeave={e => {
+                 const el = e.currentTarget as HTMLElement;
+                 el.style.borderColor = 'var(--c-border)';
+                 el.style.boxShadow   = '';
+                 el.style.background  = 'var(--c-card)';
+               }}>
+              <div className="w-12 h-12 rounded-2xl grid place-items-center flex-shrink-0
+                              group-hover:scale-110 transition-transform duration-300"
+                   style={{
+                     background: 'linear-gradient(135deg,#003087,#0070ba)',
+                     boxShadow: '0 4px 16px rgba(0,112,186,0.30)',
+                   }}>
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
+                </svg>
+              </div>
+              <div>
+                <p className="font-semibold mb-0.5 group-hover:text-blue-400 transition-colors"
+                   style={{ color: 'var(--c-text1)' }}>
+                  PayPal
+                </p>
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--c-text3)' }}>
+                  Direct support via PayPal
+                </p>
+                <span className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-blue-400">
+                  paypal.me ↗
+                </span>
+              </div>
+            </a>
+          )}
 
         </div>
       </div>

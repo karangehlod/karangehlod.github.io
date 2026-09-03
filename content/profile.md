@@ -24,8 +24,9 @@ social:
   orcid:    "0000-0001-5909-1064"  # https://orcid.org/0000-0001-5909-1064
 
 support:
-  paypal:   karangehlod           # paypal.me/karangehlod  (use @karangehlod on PayPal)
-  cal:      karangehlod           # cal.com/karangehlod  (free, open-source — sign up at cal.com)
+  paypal:          karangehlod    # paypal.me/karangehlod
+  buy_me_a_coffee: theprodsde     # buymeacoffee.com/theprodsde
+  cal:             karangehlod    # cal.com/karangehlod
 
 featured_repos:
   - Agenticmemory_benchmark

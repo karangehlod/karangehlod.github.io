@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import type { GitHubProject } from '../types';
 import { getLangColor, getInitials, formatMonth } from '../utils/languageColors';
 import { StarIcon, ClockIcon, ArrowIcon } from './Icons';
@@ -6,10 +7,9 @@ import { StarIcon, ClockIcon, ArrowIcon } from './Icons';
 interface Props {
   project: GitHubProject;
   index?: number;
-  onInfo: (p: GitHubProject) => void;
 }
 
-export function ProjectCard({ project, index = 0, onInfo }: Props) {
+export function ProjectCard({ project, index = 0 }: Props) {
   const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -120,17 +120,17 @@ export function ProjectCard({ project, index = 0, onInfo }: Props) {
           )}
         </div>
 
-        {/* "More info" button */}
-        <button
-          onClick={() => onInfo(project)}
+        {/* "View Details" — navigates to the project's full-page docs */}
+        <Link
+          to={`/projects/${project.slug}`}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs
                      font-semibold text-indigo-400 border border-indigo-500/20
                      hover:bg-indigo-500/10 hover:border-indigo-500/40 hover:text-indigo-300
                      transition-all duration-200 flex-shrink-0"
-          aria-label={`More info about ${project.name}`}
+          aria-label={`View details for ${project.name}`}
         >
-          More info <ArrowIcon />
-        </button>
+          View Details <ArrowIcon />
+        </Link>
       </div>
     </article>
   );

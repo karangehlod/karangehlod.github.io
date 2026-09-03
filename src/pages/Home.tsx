@@ -1,9 +1,6 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useProjects } from '../hooks/useProjects';
 import { ProjectCard } from '../components/ProjectCard';
-import { ProjectModal } from '../components/ProjectModal';
-import type { GitHubProject } from '../types';
 import { GithubIcon, ArrowIcon } from '../components/Icons';
 
 /* ── Animated hero background blobs ─────────────────────────── */
@@ -82,7 +79,6 @@ function Skeletons({ count, tall = false }: { count: number; tall?: boolean }) {
 /* ── Home page ──────────────────────────────────────────────── */
 export default function Home() {
   const { dataset, status } = useProjects();
-  const [activeModal, setActiveModal] = useState<GitHubProject | null>(null);
 
   const featuredProjects = dataset?.featuredProjects ?? [];
 
@@ -177,7 +173,7 @@ export default function Home() {
                 ? <Skeletons count={3} tall />
                 : featuredProjects.length > 0
                   ? featuredProjects.map((p, i) => (
-                      <ProjectCard key={p.id} project={p} index={i} onInfo={setActiveModal} />
+                      <ProjectCard key={p.id} project={p} index={i} />
                     ))
                   : null
               }
@@ -243,7 +239,6 @@ export default function Home() {
         </div>
       </section>
 
-      <ProjectModal project={activeModal} onClose={() => setActiveModal(null)} />
     </>
   );
 }

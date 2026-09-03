@@ -1,6 +1,18 @@
 {
-  "generatedAt": "2026-08-20T08:58:00.119Z",
+  "generatedAt": "2026-09-03T07:09:09.851Z",
   "contributions": [
+    {
+      "id": 5202248059,
+      "number": 20,
+      "title": "docs: document Cloud API token authentication in README",
+      "url": "https://github.com/Toyota/confluence2md/pull/20",
+      "repo": "Toyota/confluence2md",
+      "repoUrl": "https://github.com/Toyota/confluence2md",
+      "mergedAt": "2026-08-21T16:34:31Z",
+      "labels": [],
+      "stars": 66,
+      "language": "Rust"
+    },
     {
       "id": 5192939834,
       "number": 17,
@@ -26,5 +38,5 @@
       "language": "Rust"
     }
   ],
-  "total": 2
+  "total": 3
 }

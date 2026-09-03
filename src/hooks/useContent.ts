@@ -23,7 +23,8 @@ export interface Social {
 
 export interface Support {
   paypal: string;
-  cal: string;    // cal.com handle — free at cal.com
+  buy_me_a_coffee?: string;
+  cal: string;
 }
 
 export interface ExperienceItem {

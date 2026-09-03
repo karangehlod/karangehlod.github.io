@@ -7,6 +7,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 const Home         = lazy(() => import('./pages/Home'));
 const About        = lazy(() => import('./pages/About'));
 const Projects     = lazy(() => import('./pages/Projects'));
+const ProjectPage  = lazy(() => import('./pages/ProjectPage'));
 const Publications = lazy(() => import('./pages/Publications'));
 
 function PageLoader() {
@@ -28,24 +29,41 @@ function RevealObserver() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    const io = new IntersectionObserver(
       entries => entries.forEach(e => {
         if (e.isIntersecting) {
           e.target.classList.add('revealed');
-          observer.unobserve(e.target);
+          io.unobserve(e.target);
         }
       }),
       { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
     );
 
+    const observe = (el: Element) => {
+      if (!el.classList.contains('revealed')) io.observe(el);
+    };
+
     // Allow React to finish rendering before observing
     const timer = setTimeout(() => {
-      document.querySelectorAll('.reveal:not(.revealed)').forEach(el => observer.observe(el));
+      document.querySelectorAll('.reveal:not(.revealed)').forEach(observe);
     }, 80);
+
+    // Pick up .reveal elements added after lazy-load or async data fetch
+    const mo = new MutationObserver(mutations => {
+      for (const m of mutations) {
+        m.addedNodes.forEach(node => {
+          if (!(node instanceof Element)) return;
+          if (node.classList.contains('reveal')) observe(node);
+          node.querySelectorAll('.reveal:not(.revealed)').forEach(observe);
+        });
+      }
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       clearTimeout(timer);
-      observer.disconnect();
+      io.disconnect();
+      mo.disconnect();
     };
   }, [pathname]);
 
@@ -63,8 +81,9 @@ function Layout() {
           <Routes>
             <Route path="/"             element={<Home />} />
             <Route path="/about"        element={<About />} />
-            <Route path="/projects"     element={<Projects />} />
-            <Route path="/publications" element={<Publications />} />
+            <Route path="/projects"         element={<Projects />} />
+            <Route path="/projects/:slug"   element={<ProjectPage />} />
+            <Route path="/publications"     element={<Publications />} />
             <Route path="*"             element={<Home />} />
           </Routes>
         </Suspense>
