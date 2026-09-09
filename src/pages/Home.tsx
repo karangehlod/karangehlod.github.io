@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useProjects } from '../hooks/useProjects';
+import { useContributions } from '../hooks/useContributions';
+import { useActivity } from '../hooks/useActivity';
 import { ProjectCard } from '../components/ProjectCard';
+import { ContributionCalendar } from '../components/ContributionCalendar';
 import { GithubIcon, ArrowIcon } from '../components/Icons';
+import { getLangColor, formatMonth } from '../utils/languageColors';
 
 /* ── Animated hero background blobs ─────────────────────────── */
 function HeroBackground() {
@@ -21,31 +25,40 @@ function HeroBackground() {
 }
 
 /* ── Stats band ─────────────────────────────────────────────── */
-function StatsBand({ dataset }: { dataset: ReturnType<typeof useProjects>['dataset'] }) {
+function StatsBand({
+  dataset,
+  ossTotal,
+}: {
+  dataset: ReturnType<typeof useProjects>['dataset'];
+  ossTotal: number | null;
+}) {
   const projects  = dataset?.projects ?? [];
   const langCount = new Set(projects.map(p => p.language).filter(Boolean)).size;
   const stars     = projects.reduce((s, p) => s + p.stars, 0);
+
+  const stats = [
+    { id: 'repos', val: projects.length,    label: 'Public Repos'  },
+    { id: 'langs', val: langCount,           label: 'Languages'     },
+    { id: 'stars', val: stars,               label: 'Total Stars'   },
+    { id: 'oss',   val: ossTotal ?? 0,       label: 'OSS PRs Merged'},
+  ];
 
   return (
     <section className="bg-bg-surface border-y border-white/[0.04] py-4"
              aria-label="Repository statistics">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <dl className="flex flex-wrap items-center justify-center">
-          {[
-            { id: 'repos', val: projects.length, label: 'Public Repos' },
-            { id: 'langs', val: langCount,        label: 'Languages' },
-            { id: 'stars', val: stars,             label: 'Total Stars' },
-          ].map(({ id, val, label }, i) => (
+          {stats.map(({ id, val, label }, i) => (
             <div key={id} className="flex items-center">
               <div className="flex flex-col items-center gap-0.5 px-6 py-3 flex-1 min-w-[7rem]">
                 <dd className="text-3xl sm:text-4xl font-extrabold text-slate-100 tabular-nums">
-                  {dataset ? val : '—'}
+                  {dataset || ossTotal !== null ? val : '—'}
                 </dd>
                 <dt className="text-[0.65rem] font-semibold text-slate-600 uppercase tracking-widest">
                   {label}
                 </dt>
               </div>
-              {i < 2 && (
+              {i < stats.length - 1 && (
                 <div className="w-px h-9 bg-white/[0.04] self-center flex-shrink-0 hidden sm:block" />
               )}
             </div>
@@ -78,9 +91,12 @@ function Skeletons({ count, tall = false }: { count: number; tall?: boolean }) {
 
 /* ── Home page ──────────────────────────────────────────────── */
 export default function Home() {
-  const { dataset, status } = useProjects();
+  const { dataset, status }                      = useProjects();
+  const { dataset: contribData }                 = useContributions();
+  const { dataset: activityData, status: actSt } = useActivity();
 
   const featuredProjects = dataset?.featuredProjects ?? [];
+  const ossTotal = contribData ? contribData.total : null;
 
   return (
     <>
@@ -149,7 +165,7 @@ export default function Home() {
       </section>
 
       {/* ── Stats ── */}
-      <StatsBand dataset={dataset} />
+      <StatsBand dataset={dataset} ossTotal={ossTotal} />
 
       {/* ── Featured projects ── */}
       {(status !== 'error') && (
@@ -187,6 +203,160 @@ export default function Home() {
                                transition-all duration-200">
                 View all repositories <ArrowIcon />
               </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── GitHub Activity Calendar ── */}
+      {actSt !== 'error' && (
+        <section className="py-20 border-t border-white/[0.04]" aria-labelledby="activity-heading">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <header className="mb-8 reveal">
+              <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-2">
+                Commit history
+              </p>
+              <h2 id="activity-heading"
+                  className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">
+                GitHub Activity
+              </h2>
+              <p className="text-slate-500 text-sm">
+                Daily contributions across all public and private repositories.
+              </p>
+            </header>
+
+            {actSt === 'loading' && (
+              <div className="skeleton h-36 rounded-2xl" aria-hidden="true" />
+            )}
+
+            {actSt === 'ready' && activityData && activityData.weeks.length > 0 && (
+              <div className="p-5 sm:p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
+                <ContributionCalendar dataset={activityData} />
+              </div>
+            )}
+
+            {actSt === 'ready' && activityData && activityData.weeks.length === 0 && (
+              <p className="text-slate-500 text-sm">No activity data available.</p>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ── OSS Contributions preview ── */}
+      {contribData && contribData.contributions.length > 0 && (
+        <section className="py-20 border-t border-white/[0.04]" aria-labelledby="oss-heading">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <header className="mb-10 reveal">
+              <p className="text-xs font-bold tracking-[0.14em] uppercase text-emerald-400 mb-2">
+                Open source
+              </p>
+              <div className="flex items-end justify-between flex-wrap gap-4">
+                <div>
+                  <h2 id="oss-heading"
+                      className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">
+                    Contributing to the ecosystem
+                  </h2>
+                  <p className="text-slate-500 text-sm max-w-xl">
+                    Merged pull requests to external projects — shipping real fixes and features
+                    to tools other developers depend on.
+                  </p>
+                </div>
+                <Link to="/projects"
+                      className="inline-flex items-center gap-1.5 text-sm font-semibold
+                                 text-indigo-400 hover:text-indigo-300 transition-colors whitespace-nowrap group">
+                  All contributions
+                  <ArrowIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </header>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {contribData.contributions.slice(0, 3).map((c, i) => (
+                <a key={c.id}
+                   href={c.url}
+                   target="_blank" rel="noopener noreferrer"
+                   className="group flex flex-col gap-3 p-5 rounded-2xl border transition-all duration-300
+                              hover:-translate-y-1 bg-white/[0.02] border-white/[0.06]
+                              hover:border-emerald-500/30 hover:bg-white/[0.04] reveal"
+                   style={{ animationDelay: `${i * 60}ms` }}>
+
+                  {/* Repo + stars */}
+                  <div className="flex items-center gap-2 min-w-0">
+                    <svg className="w-3.5 h-3.5 flex-shrink-0 text-slate-500" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                    </svg>
+                    <a href={c.repoUrl} target="_blank" rel="noopener noreferrer"
+                       className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 truncate transition-colors"
+                       onClick={e => e.stopPropagation()}>
+                      {c.repo}
+                    </a>
+                    {c.stars > 0 && (
+                      <span className="ml-auto text-xs text-slate-600 flex-shrink-0">★ {c.stars}</span>
+                    )}
+                  </div>
+
+                  {/* PR title */}
+                  <p className="text-sm font-medium text-slate-200 leading-snug
+                                group-hover:text-white transition-colors flex-1 line-clamp-2">
+                    {c.title}
+                  </p>
+
+                  {/* PR body excerpt */}
+                  {c.body && (
+                    <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
+                      {c.body}
+                    </p>
+                  )}
+
+                  {/* Code impact */}
+                  {(c.additions > 0 || c.deletions > 0 || c.changedFiles > 0) && (
+                    <div className="flex items-center gap-3 flex-wrap py-2 px-3 rounded-lg
+                                    bg-white/[0.03] border border-white/[0.04]">
+                      {c.additions > 0 && (
+                        <span className="text-[11px] font-mono font-semibold text-emerald-400">
+                          +{c.additions.toLocaleString()}
+                        </span>
+                      )}
+                      {c.deletions > 0 && (
+                        <span className="text-[11px] font-mono font-semibold text-rose-400">
+                          -{c.deletions.toLocaleString()}
+                        </span>
+                      )}
+                      {c.changedFiles > 0 && (
+                        <span className="text-[11px] text-slate-500">
+                          {c.changedFiles} file{c.changedFiles !== 1 ? 's' : ''}
+                        </span>
+                      )}
+                      {c.commits > 0 && (
+                        <span className="text-[11px] text-slate-500">
+                          {c.commits} commit{c.commits !== 1 ? 's' : ''}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between gap-2 mt-auto pt-2
+                                  border-t border-white/[0.05]">
+                    <div className="flex items-center gap-3">
+                      {c.language && (
+                        <span className="flex items-center gap-1 text-xs text-slate-500">
+                          <span className="w-2 h-2 rounded-full flex-shrink-0"
+                                style={{ background: getLangColor(c.language) }} />
+                          {c.language}
+                        </span>
+                      )}
+                      {c.mergedAt && (
+                        <span className="text-xs text-slate-500">{formatMonth(c.mergedAt)}</span>
+                      )}
+                    </div>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.65rem]
+                                     font-semibold bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 flex-shrink-0">
+                      ✓ Merged
+                    </span>
+                  </div>
+                </a>
+              ))}
             </div>
           </div>
         </section>

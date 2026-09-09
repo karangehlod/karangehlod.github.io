@@ -11,6 +11,11 @@ export interface Contribution {
   labels: string[];
   stars: number;
   language: string;
+  additions: number;
+  deletions: number;
+  changedFiles: number;
+  commits: number;
+  body: string;
 }
 
 export interface ContributionDataset {

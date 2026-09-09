@@ -37,6 +37,19 @@ jobs:
       - name: Generate live project data
         run: npm run build:data
         env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Generate contribution data
+        run: npm run build:contributions
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Generate GitHub activity calendar
+        run: npm run build:activity
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Build content from profile.md
