@@ -17,21 +17,63 @@ async function fetchReadme(owner: string, repo: string): Promise<string | null> 
   return null;
 }
 
-function renderInline(text: string) {
-  const parts = text.split(/(`[^`]+`)/g);
-  return parts.map((part, i) => {
-    if (part.startsWith('`') && part.endsWith('`') && part.length > 2) {
-      return (
-        <code key={i}
+// Matches (in priority order): image, link, bold, italic, inline-code
+const INLINE_RE = /!\[([^\]]*)\]\(([^)\s]+)[^)]*\)|\[([^\]]+)\]\(([^)\s]+)[^)]*\)|\*\*([^*\n]+)\*\*|\*([^*\n]+)\*|`([^`\n]+)`/g;
+
+function renderInline(text: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  let last = 0;
+  let key  = 0;
+  let m: RegExpExecArray | null;
+  INLINE_RE.lastIndex = 0;
+
+  while ((m = INLINE_RE.exec(text)) !== null) {
+    if (m.index > last) nodes.push(text.slice(last, m.index));
+
+    if (m[2]) {
+      // Image: ![alt](url)
+      nodes.push(
+        <img key={key++} src={m[2]} alt={m[1] || ''}
+             className="inline-block max-h-5 align-middle"
+             onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+      );
+    } else if (m[4]) {
+      // Link: [text](url)
+      nodes.push(
+        <a key={key++} href={m[4]} target="_blank" rel="noopener noreferrer"
+           className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors">
+          {m[3]}
+        </a>
+      );
+    } else if (m[5]) {
+      // Bold: **text**
+      nodes.push(<strong key={key++} className="font-semibold text-slate-100">{m[5]}</strong>);
+    } else if (m[6]) {
+      // Italic: *text*
+      nodes.push(<em key={key++} className="italic text-slate-300">{m[6]}</em>);
+    } else if (m[7]) {
+      // Code: `text`
+      nodes.push(
+        <code key={key++}
               className="px-1.5 py-0.5 rounded text-xs font-mono"
               style={{ background: 'rgba(99,102,241,0.12)', color: '#a5b4fc' }}>
-          {part.slice(1, -1)}
+          {m[7]}
         </code>
       );
     }
-    return part;
-  });
+    last = m.index + m[0].length;
+  }
+
+  if (last < text.length) nodes.push(text.slice(last));
+  return nodes;
 }
+
+// Detect lines that are only a block-level image
+const BLOCK_IMG_RE = /^!\[([^\]]*)\]\(([^)\s]+)[^)]*\)\s*$/;
+
+// Detect table rows (used in multi-line table detection)
+const TABLE_ROW_RE = /^\|.+\|$/;
+const TABLE_SEP_RE = /^\|[-| :]+\|$/;
 
 function FullMarkdown({ text }: { text: string }) {
   const lines = text.split('\n');
@@ -40,70 +82,156 @@ function FullMarkdown({ text }: { text: string }) {
 
   while (i < lines.length) {
     const line = lines[i];
+    const trimmed = line.trim();
 
-    if (line.startsWith('### ')) {
+    // ── Heading 3
+    if (line.startsWith('#### ')) {
       result.push(
-        <h4 key={i} className="text-base font-semibold mt-5 mb-1.5"
-            style={{ color: 'var(--c-text1)' }}>
+        <h5 key={i} className="text-sm font-semibold mt-4 mb-1" style={{ color: 'var(--c-text1)' }}>
+          {renderInline(line.slice(5))}
+        </h5>
+      );
+      i++;
+
+    // ── Heading 3
+    } else if (line.startsWith('### ')) {
+      result.push(
+        <h4 key={i} className="text-base font-semibold mt-5 mb-1.5" style={{ color: 'var(--c-text1)' }}>
           {renderInline(line.slice(4))}
         </h4>
       );
+      i++;
+
+    // ── Heading 2
     } else if (line.startsWith('## ')) {
       result.push(
-        <h3 key={i} className="text-xl font-bold mt-6 mb-2"
-            style={{ color: 'var(--c-text1)' }}>
+        <h3 key={i} className="text-xl font-bold mt-7 mb-2" style={{ color: 'var(--c-text1)' }}>
           {renderInline(line.slice(3))}
         </h3>
       );
+      i++;
+
+    // ── Heading 1
     } else if (line.startsWith('# ')) {
       result.push(
-        <h2 key={i} className="text-2xl font-bold mt-6 mb-2"
-            style={{ color: 'var(--c-text1)' }}>
+        <h2 key={i} className="text-2xl font-bold mt-7 mb-2" style={{ color: 'var(--c-text1)' }}>
           {renderInline(line.slice(2))}
         </h2>
       );
-    } else if (line.startsWith('```')) {
-      const codeLines: string[] = [];
       i++;
+
+    // ── Fenced code block
+    } else if (line.startsWith('```')) {
+      const lang = line.slice(3).trim();
+      i++;
+      const codeLines: string[] = [];
       while (i < lines.length && !lines[i].startsWith('```')) {
         codeLines.push(lines[i]);
         i++;
       }
+      i++; // skip closing ```
       result.push(
-        <pre key={`code-${i}`}
-             className="my-4 p-4 rounded-xl overflow-x-auto text-xs font-mono leading-relaxed
-                        border border-white/[0.06]"
-             style={{ background: 'rgba(0,0,0,0.35)', color: 'var(--c-text2)' }}>
-          <code>{codeLines.join('\n')}</code>
-        </pre>
+        <div key={`code-${i}`} className="my-4 relative">
+          {lang && (
+            <span className="absolute top-2.5 right-3 text-[10px] font-mono text-slate-600 select-none uppercase">
+              {lang}
+            </span>
+          )}
+          <pre className="p-4 rounded-xl overflow-x-auto text-xs font-mono leading-relaxed border border-white/[0.06]"
+               style={{ background: 'rgba(0,0,0,0.35)', color: 'var(--c-text2)' }}>
+            <code>{codeLines.join('\n')}</code>
+          </pre>
+        </div>
       );
+
+    // ── Blockquote
     } else if (line.startsWith('> ')) {
+      const quoteLines: string[] = [];
+      while (i < lines.length && lines[i].startsWith('> ')) {
+        quoteLines.push(lines[i].slice(2));
+        i++;
+      }
       result.push(
-        <blockquote key={i}
-                    className="my-3 pl-4 border-l-2 border-indigo-500/40 text-sm italic"
-                    style={{ color: 'var(--c-text2)' }}>
-          {renderInline(line.slice(2))}
+        <blockquote key={`bq-${i}`}
+                    className="my-3 pl-4 border-l-2 border-indigo-500/40 space-y-1">
+          {quoteLines.map((ql, qi) => (
+            <p key={qi} className="text-sm italic" style={{ color: 'var(--c-text2)' }}>
+              {renderInline(ql)}
+            </p>
+          ))}
         </blockquote>
       );
-    } else if (/^[-*]{3,}$/.test(line.trim())) {
-      result.push(<hr key={i} className="my-5 border-white/[0.06]" />);
-    } else if (line.startsWith('- ') || line.startsWith('* ')) {
-      const items: string[] = [];
-      while (i < lines.length && (lines[i].startsWith('- ') || lines[i].startsWith('* '))) {
-        items.push(lines[i].slice(2));
+
+    // ── Horizontal rule
+    } else if (/^[-*_]{3,}$/.test(trimmed)) {
+      result.push(<hr key={i} className="my-6 border-white/[0.07]" />);
+      i++;
+
+    // ── Table
+    } else if (TABLE_ROW_RE.test(trimmed)) {
+      const tableLines: string[] = [];
+      while (i < lines.length && TABLE_ROW_RE.test(lines[i].trim())) {
+        tableLines.push(lines[i]);
+        i++;
+      }
+      // Parse: first row = headers, second row = separator, rest = body
+      const rows = tableLines.filter(l => !TABLE_SEP_RE.test(l.trim()));
+      const headers = rows[0]?.split('|').map(c => c.trim()).filter(Boolean) ?? [];
+      const body = rows.slice(1);
+      result.push(
+        <div key={`tbl-${i}`} className="my-4 overflow-x-auto">
+          <table className="w-full text-xs border-collapse">
+            <thead>
+              <tr>
+                {headers.map((h, hi) => (
+                  <th key={hi}
+                      className="px-3 py-2 text-left font-semibold border-b border-white/[0.08]"
+                      style={{ color: 'var(--c-text1)' }}>
+                    {renderInline(h)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {body.map((row, ri) => {
+                const cells = row.split('|').map(c => c.trim()).filter(Boolean);
+                return (
+                  <tr key={ri} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+                    {cells.map((cell, ci) => (
+                      <td key={ci} className="px-3 py-2" style={{ color: 'var(--c-text2)' }}>
+                        {renderInline(cell)}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      );
+
+    // ── Unordered list (also handles indented sub-items)
+    } else if (/^(\s*)([-*+]) /.test(line)) {
+      const items: { text: string; depth: number }[] = [];
+      while (i < lines.length && /^(\s*)([-*+]) /.test(lines[i])) {
+        const dm = lines[i].match(/^(\s*)([-*+]) (.*)/);
+        items.push({ text: dm?.[3] ?? '', depth: Math.floor((dm?.[1]?.length ?? 0) / 2) });
         i++;
       }
       result.push(
         <ul key={`ul-${i}`} className="my-2 space-y-1">
           {items.map((item, j) => (
-            <li key={j} className="flex gap-2 text-sm" style={{ color: 'var(--c-text2)' }}>
+            <li key={j}
+                className="flex gap-2 text-sm"
+                style={{ color: 'var(--c-text2)', paddingLeft: `${item.depth * 1}rem` }}>
               <span className="text-indigo-400 flex-shrink-0 mt-0.5">·</span>
-              <span>{renderInline(item)}</span>
+              <span>{renderInline(item.text)}</span>
             </li>
           ))}
         </ul>
       );
-      continue;
+
+    // ── Ordered list
     } else if (/^\d+\. /.test(line)) {
       const items: string[] = [];
       while (i < lines.length && /^\d+\. /.test(lines[i])) {
@@ -114,7 +242,7 @@ function FullMarkdown({ text }: { text: string }) {
         <ol key={`ol-${i}`} className="my-2 space-y-1">
           {items.map((item, j) => (
             <li key={j} className="flex gap-2 text-sm" style={{ color: 'var(--c-text2)' }}>
-              <span className="text-indigo-400 flex-shrink-0 font-mono text-xs mt-0.5 w-5">
+              <span className="text-indigo-400 flex-shrink-0 font-mono text-xs mt-0.5 w-5 text-right">
                 {j + 1}.
               </span>
               <span>{renderInline(item)}</span>
@@ -122,20 +250,54 @@ function FullMarkdown({ text }: { text: string }) {
           ))}
         </ol>
       );
-      continue;
-    } else if (line.trim() === '') {
-      result.push(<div key={i} className="h-2" />);
-    } else {
+
+    // ── Block-level standalone image
+    } else if (BLOCK_IMG_RE.test(trimmed)) {
+      const m = trimmed.match(BLOCK_IMG_RE)!;
       result.push(
-        <p key={i} className="text-sm leading-relaxed" style={{ color: 'var(--c-text2)' }}>
-          {renderInline(line)}
-        </p>
+        <div key={i} className="my-4 flex justify-center">
+          <img src={m[2]} alt={m[1] || ''}
+               className="max-w-full h-auto rounded-xl border border-white/[0.06]"
+               loading="lazy"
+               onError={e => { (e.target as HTMLImageElement).parentElement!.remove(); }} />
+        </div>
       );
+      i++;
+
+    // ── Empty line (paragraph break)
+    } else if (trimmed === '') {
+      result.push(<div key={i} className="h-3" />);
+      i++;
+
+    // ── Plain paragraph: group consecutive plain lines
+    } else {
+      const paraLines: string[] = [];
+      while (
+        i < lines.length &&
+        lines[i].trim() !== '' &&
+        !lines[i].startsWith('#') &&
+        !lines[i].startsWith('```') &&
+        !/^(\s*)([-*+]) /.test(lines[i]) &&
+        !/^\d+\. /.test(lines[i]) &&
+        !lines[i].startsWith('> ') &&
+        !lines[i].startsWith('|') &&
+        !/^[-*_]{3,}$/.test(lines[i].trim()) &&
+        !BLOCK_IMG_RE.test(lines[i].trim())
+      ) {
+        paraLines.push(lines[i]);
+        i++;
+      }
+      if (paraLines.length > 0) {
+        result.push(
+          <p key={`p-${i}`} className="text-sm leading-relaxed" style={{ color: 'var(--c-text2)' }}>
+            {renderInline(paraLines.join(' '))}
+          </p>
+        );
+      }
     }
-    i++;
   }
 
-  return <div className="space-y-0.5">{result}</div>;
+  return <div className="space-y-1">{result}</div>;
 }
 
 export default function ProjectPage() {
@@ -326,7 +488,7 @@ export default function ProjectPage() {
                    background: 'var(--c-card)',
                  }}>
                 <ExternalIcon className="w-4 h-4" />
-                View Docs
+                Live Site
               </a>
             )}
           </div>

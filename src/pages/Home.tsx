@@ -208,40 +208,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* ── GitHub Activity Calendar ── */}
-      {actSt !== 'error' && (
-        <section className="py-20 border-t border-white/[0.04]" aria-labelledby="activity-heading">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <header className="mb-8 reveal">
-              <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-2">
-                Commit history
-              </p>
-              <h2 id="activity-heading"
-                  className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">
-                GitHub Activity
-              </h2>
-              <p className="text-slate-500 text-sm">
-                Daily contributions across all public and private repositories.
-              </p>
-            </header>
-
-            {actSt === 'loading' && (
-              <div className="skeleton h-36 rounded-2xl" aria-hidden="true" />
-            )}
-
-            {actSt === 'ready' && activityData && activityData.weeks.length > 0 && (
-              <div className="p-5 sm:p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
-                <ContributionCalendar dataset={activityData} />
-              </div>
-            )}
-
-            {actSt === 'ready' && activityData && activityData.weeks.length === 0 && (
-              <p className="text-slate-500 text-sm">No activity data available.</p>
-            )}
-          </div>
-        </section>
-      )}
-
       {/* ── OSS Contributions preview ── */}
       {contribData && contribData.contributions.length > 0 && (
         <section className="py-20 border-t border-white/[0.04]" aria-labelledby="oss-heading">
@@ -358,6 +324,40 @@ export default function Home() {
                 </a>
               ))}
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── GitHub Activity Calendar ── */}
+      {actSt !== 'error' && (
+        <section className="py-20 border-t border-white/[0.04]" aria-labelledby="activity-heading">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <header className="mb-8 reveal">
+              <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-2">
+                Commit history
+              </p>
+              <h2 id="activity-heading"
+                  className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">
+                GitHub Activity
+              </h2>
+              <p className="text-slate-500 text-sm">
+                Daily contributions across all public and private repositories.
+              </p>
+            </header>
+
+            {actSt === 'loading' && (
+              <div className="skeleton h-36 rounded-2xl" aria-hidden="true" />
+            )}
+
+            {actSt === 'ready' && activityData && activityData.weeks.length > 0 && (
+              <div className="p-5 sm:p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
+                <ContributionCalendar dataset={activityData} />
+              </div>
+            )}
+
+            {actSt === 'ready' && activityData && activityData.weeks.length === 0 && (
+              <p className="text-slate-500 text-sm">No activity data available.</p>
+            )}
           </div>
         </section>
       )}

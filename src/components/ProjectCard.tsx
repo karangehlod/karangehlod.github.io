@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { GitHubProject } from '../types';
 import { getLangColor, getInitials, formatMonth } from '../utils/languageColors';
-import { StarIcon, ClockIcon, ArrowIcon } from './Icons';
+import { StarIcon, ClockIcon, ArrowIcon, ExternalIcon } from './Icons';
 
 interface Props {
   project: GitHubProject;
@@ -17,14 +17,12 @@ export function ProjectCard({ project, index = 0 }: Props) {
     const el = ref.current;
     if (!el) return;
 
-    // Cards already in viewport → stagger with timeout
     const rect = el.getBoundingClientRect();
     if (rect.top < window.innerHeight) {
       const t = setTimeout(() => setVisible(true), index * 55);
       return () => clearTimeout(t);
     }
 
-    // Off-screen → IntersectionObserver
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -63,9 +61,9 @@ export function ProjectCard({ project, index = 0 }: Props) {
         <div className="flex gap-1.5 flex-shrink-0">
           {project.featured && (
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[0.65rem]
-                             font-bold tracking-wide border border-amber-400/25 bg-amber-400/10
+                             font-bold tracking-wide border border-amber-400/30 bg-amber-400/10
                              text-amber-400">
-              Featured
+              ★ Featured
             </span>
           )}
           {project.archived && (
@@ -120,17 +118,37 @@ export function ProjectCard({ project, index = 0 }: Props) {
           )}
         </div>
 
-        {/* "View Details" — navigates to the project's full-page docs */}
-        <Link
-          to={`/projects/${project.slug}`}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs
-                     font-semibold text-indigo-400 border border-indigo-500/20
-                     hover:bg-indigo-500/10 hover:border-indigo-500/40 hover:text-indigo-300
-                     transition-all duration-200 flex-shrink-0"
-          aria-label={`View details for ${project.name}`}
-        >
-          View Details <ArrowIcon />
-        </Link>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {/* Live site link */}
+          {project.homepage && (
+            <a
+              href={project.homepage}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={e => e.stopPropagation()}
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs
+                         font-semibold text-emerald-400 border border-emerald-500/25
+                         hover:bg-emerald-500/10 hover:border-emerald-500/40
+                         transition-all duration-200"
+              aria-label={`Live site for ${project.name}`}
+            >
+              <ExternalIcon className="w-3 h-3" />
+              Live
+            </a>
+          )}
+
+          {/* Details link */}
+          <Link
+            to={`/projects/${project.slug}`}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs
+                       font-semibold text-indigo-400 border border-indigo-500/20
+                       hover:bg-indigo-500/10 hover:border-indigo-500/40 hover:text-indigo-300
+                       transition-all duration-200"
+            aria-label={`View details for ${project.name}`}
+          >
+            Details <ArrowIcon />
+          </Link>
+        </div>
       </div>
     </article>
   );
