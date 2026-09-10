@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useProjects } from '../hooks/useProjects';
 import { useContributions } from '../hooks/useContributions';
@@ -6,6 +7,64 @@ import { ProjectCard } from '../components/ProjectCard';
 import { ContributionCalendar } from '../components/ContributionCalendar';
 import { GithubIcon, ArrowIcon } from '../components/Icons';
 import { getLangColor, formatMonth } from '../utils/languageColors';
+
+/* ── Section dots navigation (desktop xl+) ──────────────────── */
+const DOTS = [
+  { id: 'sec-hero',     label: 'Home'        },
+  { id: 'sec-featured', label: 'Projects'    },
+  { id: 'sec-oss',      label: 'Open Source' },
+  { id: 'sec-activity', label: 'Activity'    },
+  { id: 'sec-about',    label: 'About'       },
+];
+
+function SectionDots() {
+  const [active, setActive] = useState('sec-hero');
+
+  useEffect(() => {
+    const update = () => {
+      let current = DOTS[0].id;
+      for (const { id } of DOTS) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= 100) current = id;
+      }
+      setActive(current);
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+    return () => window.removeEventListener('scroll', update);
+  }, []);
+
+  return (
+    <nav
+      aria-label="Jump to section"
+      className="fixed right-5 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col gap-4"
+    >
+      {DOTS.map(({ id, label }) => {
+        const on = active === id;
+        return (
+          <button
+            key={id}
+            onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })}
+            title={label}
+            aria-label={`Jump to ${label}`}
+            className="group flex items-center justify-end gap-2.5 outline-none"
+          >
+            <span className={`text-[11px] font-medium whitespace-nowrap transition-all duration-200
+              ${on
+                ? 'text-indigo-400 opacity-100 translate-x-0'
+                : 'text-slate-500 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 group-focus:opacity-100 group-focus:translate-x-0'}`}>
+              {label}
+            </span>
+            <span className={`flex-shrink-0 rounded-full transition-all duration-300
+              ${on
+                ? 'w-2.5 h-2.5 bg-indigo-400 shadow-[0_0_10px_2px_rgba(99,102,241,0.55)]'
+                : 'w-1.5 h-1.5 bg-white/25 group-hover:bg-white/60 group-hover:scale-125'}`} />
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
 
 /* ── Animated hero background blobs ─────────────────────────── */
 function HeroBackground() {
@@ -48,7 +107,6 @@ function StatsBand({
     <section className="bg-bg-surface border-y border-white/[0.04] py-3 sm:py-4"
              aria-label="Repository statistics">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        {/* 2-col grid on xs, single row on sm+ */}
         <dl className="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center sm:justify-center">
           {stats.map(({ id, val, label }, i) => (
             <div key={id} className="flex items-center">
@@ -67,7 +125,6 @@ function StatsBand({
             </div>
           ))}
           <div className="w-px h-8 bg-white/[0.04] self-center flex-shrink-0 hidden sm:block" />
-          {/* Live sync tile — full width on mobile, inline on sm+ */}
           <div className="col-span-2 sm:col-span-1 flex sm:block items-center justify-center
                           gap-0.5 px-4 sm:px-6 py-3 border-t border-white/[0.04] sm:border-0">
             <dd className="flex items-center gap-2 text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-100
@@ -108,8 +165,12 @@ export default function Home() {
 
   return (
     <>
+      <SectionDots />
+
       {/* ── Hero ── */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+      <section id="sec-hero"
+               className="snap-section relative min-h-screen flex flex-col
+                          items-center justify-center overflow-hidden"
                aria-labelledby="hero-heading">
         <HeroBackground />
 
@@ -172,14 +233,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Stats ── */}
+      {/* ── Stats strip (not a snap section — intentionally thin) ── */}
       <StatsBand dataset={dataset} ossTotal={ossTotal} />
 
       {/* ── Featured projects ── */}
-      {(status !== 'error') && (
-        <section className="py-24 sm:py-32" aria-labelledby="featured-heading">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <header className="max-w-lg mb-12 reveal">
+      {status !== 'error' && (
+        <section id="sec-featured"
+                 className="snap-section border-t border-white/[0.04]
+                            py-20 sm:py-24
+                            md:min-h-[calc(100vh-4rem)] md:flex md:flex-col md:justify-center"
+                 aria-labelledby="featured-heading">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <header className="mb-12 reveal">
               <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-2">
                 Highlighted work
               </p>
@@ -187,39 +252,39 @@ export default function Home() {
                   className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3">
                 Featured projects
               </h2>
-              <p className="text-slate-400 text-lg leading-relaxed">
+              <p className="text-slate-400 text-lg leading-relaxed max-w-lg">
                 Curated selection of my most significant open-source work.
               </p>
             </header>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-10">
               {status === 'loading'
                 ? <Skeletons count={3} tall />
-                : featuredProjects.length > 0
-                  ? featuredProjects.map((p, i) => (
-                      <ProjectCard key={p.id} project={p} index={i} />
-                    ))
-                  : null
+                : featuredProjects.map((p, i) => (
+                    <ProjectCard key={p.id} project={p} index={i} />
+                  ))
               }
             </div>
 
-            <div className="text-center">
-              <Link to="/projects"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm
-                               font-semibold text-indigo-400 border border-indigo-500/25
-                               hover:bg-indigo-500/10 hover:border-indigo-500/50 hover:text-indigo-300
-                               transition-all duration-200">
-                View all repositories <ArrowIcon />
-              </Link>
-            </div>
+            <Link to="/projects"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm
+                             font-semibold text-indigo-400 border border-indigo-500/25
+                             hover:bg-indigo-500/10 hover:border-indigo-500/50 hover:text-indigo-300
+                             transition-all duration-200">
+              View all repositories <ArrowIcon />
+            </Link>
           </div>
         </section>
       )}
 
-      {/* ── OSS Contributions preview ── */}
+      {/* ── OSS Contributions ── */}
       {contribData && contribData.contributions.length > 0 && (
-        <section className="py-20 border-t border-white/[0.04]" aria-labelledby="oss-heading">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="sec-oss"
+                 className="snap-section border-t border-white/[0.04]
+                            py-20 sm:py-24
+                            md:min-h-[calc(100vh-4rem)] md:flex md:flex-col md:justify-center"
+                 aria-labelledby="oss-heading">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <header className="mb-10 reveal">
               <p className="text-xs font-bold tracking-[0.14em] uppercase text-emerald-400 mb-2">
                 Open source
@@ -254,7 +319,6 @@ export default function Home() {
                               hover:border-emerald-500/30 hover:bg-white/[0.04] reveal"
                    style={{ transitionDelay: `${i * 80}ms` }}>
 
-                  {/* Repo + stars */}
                   <div className="flex items-center gap-2 min-w-0">
                     <svg className="w-3.5 h-3.5 flex-shrink-0 text-slate-500" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
@@ -269,20 +333,15 @@ export default function Home() {
                     )}
                   </div>
 
-                  {/* PR title */}
                   <p className="text-sm font-medium text-slate-200 leading-snug
                                 group-hover:text-white transition-colors flex-1 line-clamp-2">
                     {c.title}
                   </p>
 
-                  {/* PR body excerpt */}
                   {c.body && (
-                    <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
-                      {c.body}
-                    </p>
+                    <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">{c.body}</p>
                   )}
 
-                  {/* Code impact */}
                   {(c.additions > 0 || c.deletions > 0 || c.changedFiles > 0) && (
                     <div className="flex items-center gap-2 flex-wrap py-2 px-3 rounded-lg
                                     bg-white/[0.03] border border-white/[0.04]">
@@ -309,7 +368,6 @@ export default function Home() {
                     </div>
                   )}
 
-                  {/* Footer */}
                   <div className="flex items-center justify-between gap-2 mt-auto pt-2
                                   border-t border-white/[0.05]">
                     <div className="flex items-center gap-3">
@@ -338,8 +396,12 @@ export default function Home() {
 
       {/* ── GitHub Activity Calendar ── */}
       {actSt !== 'error' && (
-        <section className="py-20 border-t border-white/[0.04]" aria-labelledby="activity-heading">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="sec-activity"
+                 className="snap-section border-t border-white/[0.04]
+                            py-20 sm:py-24
+                            md:min-h-[calc(100vh-4rem)] md:flex md:flex-col md:justify-center"
+                 aria-labelledby="activity-heading">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <header className="mb-8 reveal">
               <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-2">
                 Commit history
@@ -359,7 +421,7 @@ export default function Home() {
 
             {actSt === 'ready' && activityData && activityData.weeks.length > 0 && (
               <div className="p-4 sm:p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]
-                              transition-all duration-500 animate-fade-up-1"
+                              transition-all duration-500 reveal"
                    style={{ touchAction: 'pan-y' }}>
                 <ContributionCalendar dataset={activityData} />
               </div>
@@ -373,8 +435,12 @@ export default function Home() {
       )}
 
       {/* ── About teaser ── */}
-      <section className="py-24 border-t border-white/[0.04]" aria-labelledby="about-teaser-heading">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8
+      <section id="sec-about"
+               className="snap-section border-t border-white/[0.04]
+                          py-24
+                          md:min-h-[calc(100vh-4rem)] md:flex md:flex-col md:justify-center"
+               aria-labelledby="about-teaser-heading">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full
                         grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="reveal">
             <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-2">
@@ -403,7 +469,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="flex justify-center lg:justify-start">
+          <div className="flex justify-center lg:justify-start reveal">
             <div className="relative">
               <div className="absolute inset-0 gradient-bg opacity-30 blur-3xl rounded-3xl scale-110"
                    aria-hidden="true" />
@@ -418,7 +484,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
     </>
   );
 }

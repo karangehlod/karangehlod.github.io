@@ -272,6 +272,16 @@ html.light {
     background: rgba(99,102,241,0.08);
   }
 
+  /* ── Scroll-snap sections (desktop md+, proximity so it never traps) ── */
+  @media (min-width: 768px) {
+    html { scroll-snap-type: y proximity; }
+
+    .snap-section {
+      scroll-snap-align: start;
+      scroll-margin-top: 4rem; /* nav height */
+    }
+  }
+
   /* Section reveal */
   .reveal {
     opacity: 0;
