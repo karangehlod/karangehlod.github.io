@@ -57,8 +57,8 @@ export default {
           '100%': { backgroundPosition:  '640px 0' },
         },
         'page-enter': {
-          from: { opacity: '0', transform: 'translateY(6px)' },
-          to:   { opacity: '1', transform: 'translateY(0)' },
+          from: { opacity: '0' },
+          to:   { opacity: '1' },
         },
       },
     },

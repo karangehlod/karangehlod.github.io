@@ -55,6 +55,12 @@ html.light {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    /* Hide native scrollbar — navigation via section indicator */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  html::-webkit-scrollbar {
+    display: none;
   }
 
   body {
@@ -272,15 +278,39 @@ html.light {
     background: rgba(99,102,241,0.08);
   }
 
-  /* ── Scroll-snap sections (desktop md+, proximity so it never traps) ── */
+  /* ── Scroll-snap: mandatory page-by-page on desktop ── */
   @media (min-width: 768px) {
-    html { scroll-snap-type: y proximity; }
+    html { scroll-snap-type: y mandatory; }
 
+    /* Full-viewport sections — snap cleanly one at a time */
+    .snap-section-full {
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      min-height: 100vh;
+    }
+
+    /* Legacy snap class kept for non-Home pages */
     .snap-section {
       scroll-snap-align: start;
-      scroll-margin-top: 4rem; /* nav height */
     }
   }
+
+  /* Section content entrance — replays every time the section enters view */
+  .section-reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1),
+                transform 0.6s cubic-bezier(0.16,1,0.3,1);
+  }
+  .section-reveal.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* Stagger children via sibling combinators */
+  .section-reveal:nth-child(2) { transition-delay: 0.08s; }
+  .section-reveal:nth-child(3) { transition-delay: 0.16s; }
+  .section-reveal:nth-child(4) { transition-delay: 0.24s; }
+  .section-reveal:nth-child(5) { transition-delay: 0.32s; }
 
   /* Section reveal */
   .reveal {

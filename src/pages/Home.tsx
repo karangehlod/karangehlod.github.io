@@ -8,16 +8,16 @@ import { ContributionCalendar } from '../components/ContributionCalendar';
 import { GithubIcon, ArrowIcon } from '../components/Icons';
 import { getLangColor, formatMonth } from '../utils/languageColors';
 
-/* ── Section dots navigation (desktop xl+) ──────────────────── */
+/* ── Section dot navigation (xl desktops only) ───────────────── */
 const DOTS = [
   { id: 'sec-hero',     label: 'Home'        },
+  { id: 'sec-about',    label: 'About'       },
   { id: 'sec-featured', label: 'Projects'    },
   { id: 'sec-oss',      label: 'Open Source' },
   { id: 'sec-activity', label: 'Activity'    },
-  { id: 'sec-about',    label: 'About'       },
 ];
 
-function SectionDots() {
+export function SectionDots() {
   const [active, setActive] = useState('sec-hero');
 
   useEffect(() => {
@@ -35,30 +35,39 @@ function SectionDots() {
   }, []);
 
   return (
-    <nav
-      aria-label="Jump to section"
-      className="fixed right-5 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col gap-4"
-    >
-      {DOTS.map(({ id, label }) => {
+    <nav aria-label="Page sections"
+         className="fixed right-6 inset-y-0 z-40 hidden xl:flex flex-col items-end justify-center gap-0">
+      {/* Vertical track */}
+      <div className="absolute right-[5px] inset-y-0 w-px bg-white/[0.08]" aria-hidden="true" />
+
+      {DOTS.map(({ id, label }, idx) => {
         const on = active === id;
         return (
           <button
             key={id}
             onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })}
-            title={label}
-            aria-label={`Jump to ${label}`}
-            className="group flex items-center justify-end gap-2.5 outline-none"
+            aria-label={`Go to ${label}`}
+            className="relative flex items-center justify-end gap-3 group outline-none py-3"
           >
-            <span className={`text-[11px] font-medium whitespace-nowrap transition-all duration-200
+            {/* Label: always visible for active, hover-only for inactive */}
+            <div className={`flex flex-col items-end transition-all duration-300
+              ${on ? 'opacity-100' : 'opacity-0 group-hover:opacity-70'}`}>
+              {on && (
+                <span className="text-[9px] font-bold tracking-[0.12em] uppercase text-indigo-400 leading-none mb-0.5">
+                  {String(idx + 1).padStart(2, '0')}
+                </span>
+              )}
+              <span className={`text-[11px] font-medium whitespace-nowrap leading-none
+                ${on ? 'text-slate-100' : 'text-slate-500'}`}>
+                {label}
+              </span>
+            </div>
+
+            {/* Dot */}
+            <span className={`relative z-10 flex-shrink-0 rounded-full transition-all duration-300
               ${on
-                ? 'text-indigo-400 opacity-100 translate-x-0'
-                : 'text-slate-500 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 group-focus:opacity-100 group-focus:translate-x-0'}`}>
-              {label}
-            </span>
-            <span className={`flex-shrink-0 rounded-full transition-all duration-300
-              ${on
-                ? 'w-2.5 h-2.5 bg-indigo-400 shadow-[0_0_10px_2px_rgba(99,102,241,0.55)]'
-                : 'w-1.5 h-1.5 bg-white/25 group-hover:bg-white/60 group-hover:scale-125'}`} />
+                ? 'w-[10px] h-[10px] bg-indigo-400 shadow-[0_0_10px_3px_rgba(99,102,241,0.55)]'
+                : 'w-[6px] h-[6px] bg-white/50 group-hover:bg-white/80 group-hover:scale-125'}`} />
           </button>
         );
       })}
@@ -66,7 +75,7 @@ function SectionDots() {
   );
 }
 
-/* ── Animated hero background blobs ─────────────────────────── */
+/* ── Hero background ─────────────────────────────────────────── */
 function HeroBackground() {
   return (
     <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
@@ -106,13 +115,12 @@ function StatsBand({
   return (
     <section className="bg-bg-surface border-y border-white/[0.04] py-3 sm:py-4"
              aria-label="Repository statistics">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <dl className="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center sm:justify-center">
           {stats.map(({ id, val, label }, i) => (
             <div key={id} className="flex items-center">
               <div className="flex flex-col items-center gap-0.5 px-4 sm:px-6 py-3 w-full">
-                <dd className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-100 tabular-nums
-                               transition-all duration-500">
+                <dd className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-100 tabular-nums">
                   {ready ? val : '—'}
                 </dd>
                 <dt className="text-[0.6rem] font-semibold text-slate-600 uppercase tracking-widest text-center">
@@ -129,11 +137,10 @@ function StatsBand({
                           gap-0.5 px-4 sm:px-6 py-3 border-t border-white/[0.04] sm:border-0">
             <dd className="flex items-center gap-2 text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-100
                            sm:flex-col sm:items-center sm:gap-2">
-              <span className="live-dot" />
-              <span>Live</span>
+              <span className="live-dot" /><span>Live</span>
             </dd>
-            <dt className="text-[0.6rem] font-semibold text-slate-600 uppercase tracking-widest ml-2 sm:ml-0
-                           sm:text-center sm:block">
+            <dt className="text-[0.6rem] font-semibold text-slate-600 uppercase tracking-widest
+                           ml-2 sm:ml-0 sm:text-center sm:block">
               GitHub Sync
             </dt>
           </div>
@@ -154,6 +161,32 @@ function Skeletons({ count, tall = false }: { count: number; tall?: boolean }) {
   );
 }
 
+/* ── Strip markdown for plain-text snippets ─────────────────── */
+function plainText(md: string): string {
+  return md
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/\*\*([^*\n]+)\*\*/g, '$1')
+    .replace(/\*([^*\n]+)\*/g, '$1')
+    .replace(/`([^`\n]+)`/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/^\s*[-*+]\s+/gm, '')
+    .replace(/\n+/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+/* ── Achievement chip ────────────────────────────────────────── */
+function Chip({ value, label, accent }: { value: string; label: string; accent: string }) {
+  return (
+    <div className={`flex flex-col items-center gap-0.5 px-5 py-3.5 rounded-2xl border ${accent}`}>
+      <span className="text-xl sm:text-2xl font-extrabold tabular-nums leading-none">{value}</span>
+      <span className="text-[0.6rem] font-semibold uppercase tracking-widest text-slate-500 mt-0.5">
+        {label}
+      </span>
+    </div>
+  );
+}
+
 /* ── Home page ──────────────────────────────────────────────── */
 export default function Home() {
   const { dataset, status }                      = useProjects();
@@ -161,15 +194,19 @@ export default function Home() {
   const { dataset: activityData, status: actSt } = useActivity();
 
   const featuredProjects = dataset?.featuredProjects ?? [];
-  const ossTotal = contribData ? contribData.total : null;
+  const ossTotal         = contribData ? contribData.total : null;
+  const totalAdditions   = contribData
+    ? contribData.contributions.reduce((s, c) => s + (c.additions ?? 0), 0)
+    : 0;
 
   return (
     <>
-      <SectionDots />
 
-      {/* ── Hero ── */}
+      {/* ═══════════════════════════════════════════════════════
+          1 · HERO — full viewport, centered, one message
+      ══════════════════════════════════════════════════════════ */}
       <section id="sec-hero"
-               className="snap-section relative min-h-screen flex flex-col
+               className="snap-section-full relative flex flex-col
                           items-center justify-center overflow-hidden"
                aria-labelledby="hero-heading">
         <HeroBackground />
@@ -225,39 +262,127 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2
                         flex flex-col items-center gap-2 text-slate-600 animate-fade-up-5"
              aria-hidden="true">
           <span className="text-[0.6rem] tracking-[0.14em] uppercase leading-none">Scroll</span>
           <div className="scroll-bar" />
         </div>
+
+        {/* Stats band pinned to bottom of hero — always visible on page 1 */}
+        <div className="absolute bottom-0 inset-x-0 animate-fade-up-5">
+          <StatsBand dataset={dataset} ossTotal={ossTotal} />
+        </div>
       </section>
 
-      {/* ── Stats strip (not a snap section — intentionally thin) ── */}
-      <StatsBand dataset={dataset} ossTotal={ossTotal} />
+      {/* ═══════════════════════════════════════════════════════
+          2 · WHO I AM — photo left, identity right
+      ══════════════════════════════════════════════════════════ */}
+      {/* Photo fills full left half, content right — true split screen */}
+      <section id="sec-about"
+               className="snap-section-full overflow-hidden"
+               aria-labelledby="about-heading">
+        <div className="h-full grid grid-cols-1 lg:grid-cols-2 min-h-screen">
 
-      {/* ── Featured projects ── */}
+          {/* ── Left: full-height photo ── */}
+          <div className="hidden lg:block relative section-reveal">
+            {/* indigo glow overlay on the right edge */}
+            <div className="absolute inset-y-0 right-0 w-32 z-10
+                            bg-gradient-to-r from-transparent to-[#020817]"
+                 aria-hidden="true" />
+            <img src="/profile_image.png"
+                 alt="Karan Gehlod"
+                 className="absolute inset-0 w-full h-full object-cover object-top" />
+          </div>
+
+          {/* ── Right: identity — vertically centered ── */}
+          <div className="flex flex-col justify-center gap-6
+                          px-8 sm:px-12 lg:px-16 py-24 lg:py-0">
+
+            {/* mobile: small avatar */}
+            <div className="lg:hidden flex justify-center mb-2">
+              <div className="relative w-24 h-24">
+                <div className="absolute inset-0 gradient-bg opacity-40 blur-xl rounded-full scale-150" />
+                <img src="/profile_image.png" alt="Karan Gehlod"
+                     className="relative w-24 h-24 rounded-full object-cover object-top
+                                ring-2 ring-indigo-500/40" />
+              </div>
+            </div>
+
+            <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 section-reveal">
+              Who I am
+            </p>
+            <div className="section-reveal">
+              <h2 id="about-heading"
+                  className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none mb-2">
+                Karan<br />Gehlod
+              </h2>
+              <p className="text-indigo-400 font-semibold text-lg">Senior AI Engineer</p>
+            </div>
+            <p className="text-2xl sm:text-3xl font-bold text-slate-200 leading-snug section-reveal">
+              Building the <span className="gradient-text">AI layer</span>
+            </p>
+            <p className="text-slate-400 text-lg leading-relaxed section-reveal">
+              Specialising in production autonomous systems —
+              multi-agent orchestration, RAG pipelines, and cloud-native AI platforms.
+              Delivered <strong className="text-slate-200">$250K+ impact</strong> at Johnson Controls.
+            </p>
+            <div className="grid grid-cols-3 gap-3 section-reveal">
+              <Chip value="$250K+" label="Business impact"
+                    accent="border-indigo-500/25 bg-indigo-500/[0.08] text-indigo-300" />
+              <Chip value="5+" label="Years in AI"
+                    accent="border-sky-500/25 bg-sky-500/[0.08] text-sky-300" />
+              <Chip value="15+" label="Public repos"
+                    accent="border-violet-500/25 bg-violet-500/[0.08] text-violet-300" />
+            </div>
+            <div className="flex flex-wrap gap-3 section-reveal">
+              <Link to="/about"
+                    className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full
+                               font-semibold text-sm text-white gradient-bg
+                               shadow-lg shadow-indigo-500/30
+                               hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/50
+                               transition-all duration-300">
+                More about me
+              </Link>
+              <Link to="/projects"
+                    className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full
+                               font-semibold text-sm text-slate-100
+                               border border-indigo-500/20 bg-white/[0.03]
+                               hover:border-indigo-500/50 hover:bg-indigo-500/10 hover:text-indigo-300
+                               hover:-translate-y-1 transition-all duration-300">
+                See projects <ArrowIcon className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          3 · FEATURED PROJECTS
+      ══════════════════════════════════════════════════════════ */}
       {status !== 'error' && (
         <section id="sec-featured"
-                 className="snap-section border-t border-white/[0.04]
-                            py-20 sm:py-24
-                            md:min-h-[calc(100vh-4rem)] md:flex md:flex-col md:justify-center"
+                 className="snap-section-full border-t border-white/[0.04]
+                            flex flex-col justify-center py-20 sm:py-24"
                  aria-labelledby="featured-heading">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <header className="mb-12 reveal">
-              <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-2">
+
+            {/* Section header */}
+            <header className="mb-12 section-reveal">
+              <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-3">
                 Highlighted work
               </p>
               <h2 id="featured-heading"
-                  className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3">
+                  className="text-4xl sm:text-6xl font-black tracking-tight mb-4">
                 Featured projects
               </h2>
-              <p className="text-slate-400 text-lg leading-relaxed max-w-lg">
-                Curated selection of my most significant open-source work.
+              <p className="text-slate-400 text-lg max-w-xl leading-relaxed">
+                Open-source repos I'm most proud of — each solving a real problem in production AI.
               </p>
             </header>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-10 section-reveal">
               {status === 'loading'
                 ? <Skeletons count={3} tall />
                 : featuredProjects.map((p, i) => (
@@ -266,57 +391,61 @@ export default function Home() {
               }
             </div>
 
-            <Link to="/projects"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm
-                             font-semibold text-indigo-400 border border-indigo-500/25
-                             hover:bg-indigo-500/10 hover:border-indigo-500/50 hover:text-indigo-300
-                             transition-all duration-200">
-              View all repositories <ArrowIcon />
-            </Link>
+            <div className="section-reveal">
+              <Link to="/projects"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm
+                               font-semibold text-indigo-400 border border-indigo-500/25
+                               hover:bg-indigo-500/10 hover:border-indigo-500/50 hover:text-indigo-300
+                               transition-all duration-200">
+                View all repositories <ArrowIcon />
+              </Link>
+            </div>
           </div>
         </section>
       )}
 
-      {/* ── OSS Contributions ── */}
+      {/* ═══════════════════════════════════════════════════════
+          3 · OSS CONTRIBUTIONS
+      ══════════════════════════════════════════════════════════ */}
       {contribData && contribData.contributions.length > 0 && (
         <section id="sec-oss"
-                 className="snap-section border-t border-white/[0.04]
-                            py-20 sm:py-24
-                            md:min-h-[calc(100vh-4rem)] md:flex md:flex-col md:justify-center"
+                 className="snap-section-full border-t border-white/[0.04]
+                            flex flex-col justify-center py-20 sm:py-24"
                  aria-labelledby="oss-heading">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <header className="mb-10 reveal">
-              <p className="text-xs font-bold tracking-[0.14em] uppercase text-emerald-400 mb-2">
-                Open source
+
+            <header className="mb-12 section-reveal">
+              <p className="text-xs font-bold tracking-[0.14em] uppercase text-emerald-400 mb-3">
+                Community work
               </p>
-              <div className="flex items-end justify-between flex-wrap gap-4">
-                <div>
-                  <h2 id="oss-heading"
-                      className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">
-                    Contributing to the ecosystem
-                  </h2>
-                  <p className="text-slate-500 text-sm max-w-xl">
-                    Merged pull requests to external projects — shipping real fixes and features
-                    to tools other developers depend on.
-                  </p>
-                </div>
-                <Link to="/projects"
-                      className="inline-flex items-center gap-1.5 text-sm font-semibold
-                                 text-indigo-400 hover:text-indigo-300 transition-colors whitespace-nowrap group">
-                  All contributions
-                  <ArrowIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
+              <h2 id="oss-heading"
+                  className="text-4xl sm:text-6xl font-black tracking-tight mb-4">
+                Contributing to<br className="hidden sm:block" /> the ecosystem
+              </h2>
+              <p className="text-slate-400 text-lg max-w-xl leading-relaxed">
+                Merged pull requests to external projects —&nbsp;
+                {totalAdditions > 0 && (
+                  <span className="text-emerald-400 font-semibold font-mono">
+                    +{totalAdditions.toLocaleString()} lines
+                  </span>
+                )} shipped to tools other developers depend on.
+              </p>
+              <Link to="/projects"
+                    className="inline-flex items-center gap-1.5 mt-4 text-sm font-semibold
+                               text-indigo-400 hover:text-indigo-300 transition-colors group">
+                See all contributions
+                <ArrowIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </header>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 section-reveal">
               {contribData.contributions.slice(0, 3).map((c, i) => (
                 <a key={c.id}
                    href={c.url}
                    target="_blank" rel="noopener noreferrer"
                    className="group flex flex-col gap-3 p-5 rounded-2xl border transition-all duration-300
                               hover:-translate-y-1 bg-white/[0.02] border-white/[0.06]
-                              hover:border-emerald-500/30 hover:bg-white/[0.04] reveal"
+                              hover:border-emerald-500/30 hover:bg-white/[0.04]"
                    style={{ transitionDelay: `${i * 80}ms` }}>
 
                   <div className="flex items-center gap-2 min-w-0">
@@ -339,7 +468,9 @@ export default function Home() {
                   </p>
 
                   {c.body && (
-                    <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">{c.body}</p>
+                    <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
+                      {plainText(c.body)}
+                    </p>
                   )}
 
                   {(c.additions > 0 || c.deletions > 0 || c.changedFiles > 0) && (
@@ -394,22 +525,36 @@ export default function Home() {
         </section>
       )}
 
-      {/* ── GitHub Activity Calendar ── */}
-      {actSt !== 'error' && (
+      {/* ═══════════════════════════════════════════════════════
+          4 · GITHUB ACTIVITY — full viewport, one clear metric
+          Hidden when no real data (fallback empty JSON locally)
+      ══════════════════════════════════════════════════════════ */}
+      {(actSt === 'loading' || (actSt === 'ready' && activityData && activityData.weeks.length > 0)) && (
         <section id="sec-activity"
-                 className="snap-section border-t border-white/[0.04]
-                            py-20 sm:py-24
-                            md:min-h-[calc(100vh-4rem)] md:flex md:flex-col md:justify-center"
+                 className="snap-section-full border-t border-white/[0.04]
+                            flex flex-col justify-center py-20 sm:py-24"
                  aria-labelledby="activity-heading">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <header className="mb-8 reveal">
-              <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-2">
+
+            <header className="mb-10 section-reveal">
+              <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-4">
                 Commit history
               </p>
-              <h2 id="activity-heading"
-                  className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">
-                GitHub Activity
-              </h2>
+              {activityData && activityData.totalContributions > 0 ? (
+                <div className="flex flex-wrap items-baseline gap-3 mb-3">
+                  <span className="text-5xl sm:text-7xl font-black tabular-nums gradient-text leading-none">
+                    {activityData.totalContributions.toLocaleString()}
+                  </span>
+                  <span className="text-xl sm:text-2xl font-bold text-slate-400" id="activity-heading">
+                    contributions this year
+                  </span>
+                </div>
+              ) : (
+                <h2 id="activity-heading"
+                    className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-2">
+                  GitHub Activity
+                </h2>
+              )}
               <p className="text-slate-500 text-sm">
                 Daily contributions across all public and private repositories.
               </p>
@@ -421,69 +566,15 @@ export default function Home() {
 
             {actSt === 'ready' && activityData && activityData.weeks.length > 0 && (
               <div className="p-4 sm:p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]
-                              transition-all duration-500 reveal"
+                              section-reveal"
                    style={{ touchAction: 'pan-y' }}>
                 <ContributionCalendar dataset={activityData} />
               </div>
-            )}
-
-            {actSt === 'ready' && activityData && activityData.weeks.length === 0 && (
-              <p className="text-slate-500 text-sm">No activity data available.</p>
             )}
           </div>
         </section>
       )}
 
-      {/* ── About teaser ── */}
-      <section id="sec-about"
-               className="snap-section border-t border-white/[0.04]
-                          py-24
-                          md:min-h-[calc(100vh-4rem)] md:flex md:flex-col md:justify-center"
-               aria-labelledby="about-teaser-heading">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full
-                        grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="reveal">
-            <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-2">
-              Who I am
-            </p>
-            <h2 id="about-teaser-heading"
-                className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-6">
-              Building the <span className="gradient-text">AI layer</span>
-            </h2>
-            <div className="space-y-4 text-slate-400 text-lg leading-relaxed">
-              <p>
-                Senior AI Engineer specialising in production autonomous systems —
-                multi-agent orchestration, RAG pipelines, and cloud-native AI platforms.
-                Delivered <strong className="text-slate-200">$250K+ impact</strong> at Johnson Controls.
-              </p>
-              <p>
-                Everything I build is designed to be observable, testable, and
-                deployable — not just a notebook experiment.
-              </p>
-            </div>
-            <Link to="/about"
-                  className="inline-flex items-center gap-2 mt-8 text-sm font-semibold
-                             text-indigo-400 hover:text-indigo-300 transition-colors group">
-              More about me
-              <ArrowIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-
-          <div className="flex justify-center lg:justify-start reveal">
-            <div className="relative">
-              <div className="absolute inset-0 gradient-bg opacity-30 blur-3xl rounded-3xl scale-110"
-                   aria-hidden="true" />
-              <img src="/profile_image.png"
-                   alt="Karan Gehlod"
-                   width="320" height="320"
-                   loading="lazy"
-                   className="relative w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80
-                              rounded-3xl object-cover object-top
-                              ring-2 ring-indigo-500/30 shadow-2xl shadow-indigo-500/20" />
-            </div>
-          </div>
-        </div>
-      </section>
     </>
   );
 }

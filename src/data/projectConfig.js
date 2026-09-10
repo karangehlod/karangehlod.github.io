@@ -4,7 +4,7 @@ export const projectConfig = {
     'Agenticmemory_benchmark',
     'prod-rag-ops',
     'a2a-client-service',
-    'chatbot-QA-RAG',
+    'memtuner',
     'FinancialEdApp',
   ],
   excludedRepos: ['karangehlod.github.io'],

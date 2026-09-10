@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-03T07:09:09.851Z",
+  "generatedAt": "2026-09-10T11:06:20.774Z",
   "contributions": [
     {
       "id": 5202248059,
@@ -10,8 +10,13 @@
       "repoUrl": "https://github.com/Toyota/confluence2md",
       "mergedAt": "2026-08-21T16:34:31Z",
       "labels": [],
-      "stars": 66,
-      "language": "Rust"
+      "stars": 67,
+      "language": "Rust",
+      "additions": 41,
+      "deletions": 9,
+      "changedFiles": 1,
+      "commits": 1,
+      "body": "## Summary\r\n\r\nUpdates README to document the Cloud API token authentication added in #<feat-PR-number>.\r\n\r\n## Changes\r\n\r\n- Added `CONFLUENCE2MD_USERNAME` and `CONFLUENCE2MD_API_TOKEN` to the configuration table\r\n- Added Authentication section explaining both methods (Bearer vs Basic) and priority\r\n-"
     },
     {
       "id": 5192939834,
@@ -22,8 +27,13 @@
       "repoUrl": "https://github.com/Toyota/confluence2md",
       "mergedAt": "2026-08-19T14:43:02Z",
       "labels": [],
-      "stars": 66,
-      "language": "Rust"
+      "stars": 67,
+      "language": "Rust",
+      "additions": 745,
+      "deletions": 26,
+      "changedFiles": 2,
+      "commits": 1,
+      "body": "## Summary\r\n\r\nAdds support for Atlassian Cloud API token authentication (HTTP Basic auth)\r\nalongside existing PAT-based Bearer auth. Cloud users can now authenticate\r\nusing their email and API token instead of requiring a Personal Access Token.\r\n\r\n## Changes\r\n\r\n- New env vars: `CONFLUENCE2MD_USERNAM"
     },
     {
       "id": 4628448676,
@@ -34,8 +44,13 @@
       "repoUrl": "https://github.com/Toyota/confluence2md",
       "mergedAt": "2026-06-11T22:09:54Z",
       "labels": [],
-      "stars": 66,
-      "language": "Rust"
+      "stars": 67,
+      "language": "Rust",
+      "additions": 29,
+      "deletions": 1,
+      "changedFiles": 2,
+      "commits": 10,
+      "body": "**What This PR Does**\r\nAdds a Github Action Workflow that runs mine run ci on every push and pull request to main\r\n**Changes**\r\n\r\n- Added .github/workflows/ci.yml\r\n\r\n**CI checks includes**\r\n\r\n- cargo fat --all -- -- check\r\n- cargo clip -all-target -- -D warning\r\n- cargo build\r\n- cargo test --all-tar"
     }
   ],
   "total": 3

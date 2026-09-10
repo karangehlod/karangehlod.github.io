@@ -6,6 +6,19 @@ import { PortfolioCard } from '../components/PortfolioCard';
 import { portfolioProjects } from '../data/portfolioProjects';
 import { getLangColor, formatMonth } from '../utils/languageColors';
 
+function plainText(md: string): string {
+  return md
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/\*\*([^*\n]+)\*\*/g, '$1')
+    .replace(/\*([^*\n]+)\*/g, '$1')
+    .replace(/`([^`\n]+)`/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/^\s*[-*+]\s+/gm, '')
+    .replace(/\n+/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
 function Skeletons({ count, tall = false }: { count: number; tall?: boolean }) {
   return (
     <>
@@ -158,10 +171,10 @@ export default function Projects() {
                       {c.title}
                     </p>
 
-                    {/* PR body excerpt */}
+                    {/* PR body excerpt — strip markdown before display */}
                     {c.body && (
-                      <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
-                        {c.body}
+                      <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
+                        {plainText(c.body)}
                       </p>
                     )}
 

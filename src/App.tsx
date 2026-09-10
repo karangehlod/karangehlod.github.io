@@ -3,6 +3,7 @@ import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { SectionDots } from './pages/Home';
 
 const Home         = lazy(() => import('./pages/Home'));
 const About        = lazy(() => import('./pages/About'));
@@ -24,37 +25,47 @@ function ScrollToTop() {
   return null;
 }
 
-/* Global IntersectionObserver for all .reveal elements — runs on every route change */
+/* Global observers — runs on every route change */
 function RevealObserver() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    const io = new IntersectionObserver(
+    // 1. .reveal — one-shot fade-in for general elements (non-home pages)
+    const revealIo = new IntersectionObserver(
       entries => entries.forEach(e => {
         if (e.isIntersecting) {
           e.target.classList.add('revealed');
-          io.unobserve(e.target);
+          revealIo.unobserve(e.target);
         }
       }),
       { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
     );
 
-    const observe = (el: Element) => {
-      if (!el.classList.contains('revealed')) io.observe(el);
+    // 2. .section-reveal — replays every time element enters/leaves view
+    const sectionIo = new IntersectionObserver(
+      entries => entries.forEach(e => {
+        e.target.classList.toggle('in', e.isIntersecting);
+      }),
+      { threshold: 0.12 }
+    );
+
+    const observeAll = () => {
+      document.querySelectorAll('.reveal:not(.revealed)').forEach(el => revealIo.observe(el));
+      document.querySelectorAll('.section-reveal').forEach(el => sectionIo.observe(el));
     };
 
-    // Allow React to finish rendering before observing
-    const timer = setTimeout(() => {
-      document.querySelectorAll('.reveal:not(.revealed)').forEach(observe);
-    }, 80);
+    const timer = setTimeout(observeAll, 80);
 
-    // Pick up .reveal elements added after lazy-load or async data fetch
     const mo = new MutationObserver(mutations => {
       for (const m of mutations) {
         m.addedNodes.forEach(node => {
           if (!(node instanceof Element)) return;
-          if (node.classList.contains('reveal')) observe(node);
-          node.querySelectorAll('.reveal:not(.revealed)').forEach(observe);
+          if (node.classList.contains('reveal') && !node.classList.contains('revealed'))
+            revealIo.observe(node);
+          if (node.classList.contains('section-reveal'))
+            sectionIo.observe(node);
+          node.querySelectorAll('.reveal:not(.revealed)').forEach(el => revealIo.observe(el));
+          node.querySelectorAll('.section-reveal').forEach(el => sectionIo.observe(el));
         });
       }
     });
@@ -62,7 +73,8 @@ function RevealObserver() {
 
     return () => {
       clearTimeout(timer);
-      io.disconnect();
+      revealIo.disconnect();
+      sectionIo.disconnect();
       mo.disconnect();
     };
   }, [pathname]);
@@ -89,9 +101,12 @@ function AnimatedPage() {
 }
 
 function Layout() {
+  const { pathname } = useLocation();
   return (
     <div className="min-h-screen" style={{ background: 'var(--c-bg)', color: 'var(--c-text1)' }}>
       <Nav />
+      {/* SectionDots lives here — outside AnimatedPage so transform on page-enter never breaks fixed positioning */}
+      {pathname === '/' && <SectionDots />}
       <main>
         <ScrollToTop />
         <RevealObserver />
