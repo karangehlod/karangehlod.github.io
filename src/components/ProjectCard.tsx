@@ -94,10 +94,10 @@ export function ProjectCard({ project, index = 0 }: Props) {
         </div>
       )}
 
-      {/* Footer */}
-      <div className="flex items-center justify-between gap-3 pt-3
+      {/* Footer — wraps to two rows on very small screens */}
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 pt-3
                       border-t border-white/[0.05] mt-auto">
-        <div className="flex items-center gap-3.5 flex-wrap min-w-0">
+        <div className="flex items-center gap-3 flex-wrap min-w-0">
           {project.language && (
             <span className="flex items-center gap-1.5 text-xs text-slate-500">
               <span className="w-2.5 h-2.5 rounded-full flex-shrink-0"
@@ -118,7 +118,7 @@ export function ProjectCard({ project, index = 0 }: Props) {
           )}
         </div>
 
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-1.5 flex-shrink-0 ml-auto">
           {/* Live site link */}
           {project.homepage && (
             <a

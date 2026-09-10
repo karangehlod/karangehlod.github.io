@@ -1,6 +1,6 @@
 import type { ActivityDataset } from '../hooks/useActivity';
 
-// GitHub dark-mode contribution level colors
+// GitHub dark-mode contribution level colors — kept inline because they are dynamic (level 0–4 from data)
 const LEVEL_BG: Record<number, string> = {
   0: 'rgba(255,255,255,0.05)',
   1: '#0e4429',
@@ -9,9 +9,12 @@ const LEVEL_BG: Record<number, string> = {
   4: '#39d353',
 };
 
-// Days shown as labels (Mon=1, Wed=3, Fri=5 in 0-indexed week)
+// Day labels: show Mon (1), Wed (3), Fri (5) only
 const DAY_LABEL_INDICES = new Set([1, 3, 5]);
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+// Cell = 10px, gap = 3px, step per column = 13px (kept as JS constants for computed positioning)
+const STEP = 13;
 
 interface Props {
   dataset: ActivityDataset;
@@ -20,7 +23,7 @@ interface Props {
 export function ContributionCalendar({ dataset }: Props) {
   const { weeks, totalContributions, totalCommits, totalPRs, longestStreak, currentStreak } = dataset;
 
-  // Build month labels: first week index where a new month starts
+  // Month labels: record the first column index where each month starts
   const monthLabels: { label: string; col: number }[] = [];
   let lastMonth = '';
   weeks.forEach((week, i) => {
@@ -32,41 +35,35 @@ export function ContributionCalendar({ dataset }: Props) {
     }
   });
 
-  // Each cell is 10px + 3px gap = 13px per column
-  const CELL = 10;
-  const GAP = 3;
-  const STEP = CELL + GAP;
-
   const totalCols = weeks.length;
 
   return (
     <div className="w-full">
-      {/* Scrollable grid area */}
-      <div className="overflow-x-auto pb-1 -mx-1 px-1">
+      {/* Scrollable grid — scrolls horizontally on mobile */}
+      <div className="overflow-x-auto pb-2 -mx-1 px-1">
         <div className="inline-flex gap-[3px]" style={{ minWidth: 'max-content' }}>
 
-          {/* Day-of-week labels */}
-          <div className="flex flex-col gap-[3px] mr-1" style={{ paddingTop: `${CELL + GAP + 2}px` }}>
+          {/* Day-of-week labels column */}
+          <div className="flex flex-col gap-[3px] mr-1 pt-[15px]">
             {DAY_LABELS.map((label, i) => (
               <div
                 key={label}
-                style={{ width: 24, height: CELL, lineHeight: `${CELL}px` }}
-                className="text-right text-[8px] text-slate-600 pr-1 select-none"
+                className="w-6 h-[10px] text-right text-[8px] leading-[10px] text-slate-600 pr-1 select-none"
               >
                 {DAY_LABEL_INDICES.has(i) ? label : ''}
               </div>
             ))}
           </div>
 
-          {/* Weeks column */}
+          {/* Weeks grid */}
           <div className="flex flex-col">
-            {/* Month labels row */}
-            <div className="relative mb-[2px]" style={{ height: CELL + GAP, width: totalCols * STEP }}>
+            {/* Month labels row — uses inline left: for computed column position */}
+            <div className="relative h-[13px] mb-[2px]" style={{ width: totalCols * STEP }}>
               {monthLabels.map(({ label, col }) => (
                 <span
                   key={`${label}-${col}`}
                   className="absolute text-[9px] text-slate-500 select-none leading-none"
-                  style={{ left: col * STEP, top: 0 }}
+                  style={{ left: col * STEP }}
                 >
                   {label}
                 </span>
@@ -80,21 +77,16 @@ export function ContributionCalendar({ dataset }: Props) {
                   {/* Pad days if week starts mid-week (first week of year) */}
                   {week.days.length < 7 &&
                     Array.from({ length: 7 - week.days.length }).map((_, pi) => (
-                      <div key={`pre-${pi}`} style={{ width: CELL, height: CELL }} />
+                      <div key={`pre-${pi}`} className="w-[10px] h-[10px]" />
                     ))
                   }
                   {week.days.map((day, di) => (
                     <div
                       key={di}
                       title={`${day.date} — ${day.count} contribution${day.count !== 1 ? 's' : ''}`}
-                      style={{
-                        width: CELL,
-                        height: CELL,
-                        borderRadius: 2,
-                        background: LEVEL_BG[day.level],
-                        cursor: 'default',
-                        flexShrink: 0,
-                      }}
+                      className="w-[10px] h-[10px] rounded-[2px] cursor-default flex-shrink-0
+                                 transition-transform duration-150 hover:scale-125"
+                      style={{ background: LEVEL_BG[day.level] }}
                     />
                   ))}
                 </div>
@@ -107,22 +99,23 @@ export function ContributionCalendar({ dataset }: Props) {
       {/* Legend */}
       <div className="flex items-center justify-between mt-3 flex-wrap gap-3">
         <div className="flex items-center gap-1.5">
-          <span className="text-[9px] text-slate-600 mr-1">Less</span>
+          <span className="text-[9px] text-slate-600 mr-1 select-none">Less</span>
           {[0, 1, 2, 3, 4].map(level => (
             <div
               key={level}
-              style={{ width: CELL, height: CELL, borderRadius: 2, background: LEVEL_BG[level], flexShrink: 0 }}
+              className="w-[10px] h-[10px] rounded-[2px] flex-shrink-0"
+              style={{ background: LEVEL_BG[level] }}
             />
           ))}
-          <span className="text-[9px] text-slate-600 ml-1">More</span>
+          <span className="text-[9px] text-slate-600 ml-1 select-none">More</span>
         </div>
-        <span className="text-[9px] text-slate-600">
+        <span className="text-[9px] text-slate-600 select-none">
           {new Date(dataset.generatedAt).getFullYear()} contribution activity
         </span>
       </div>
 
       {/* Stats row */}
-      <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 pt-4 border-t border-white/[0.05]">
+      <div className="flex flex-wrap gap-x-5 gap-y-2 mt-4 pt-4 border-t border-white/[0.05]">
         <CalStat value={totalContributions.toLocaleString()} label="total contributions" accent />
         <CalStat value={totalCommits.toLocaleString()} label="commits" />
         <CalStat value={totalPRs.toLocaleString()} label="pull requests" />

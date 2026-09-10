@@ -35,40 +35,48 @@ function StatsBand({
   const projects  = dataset?.projects ?? [];
   const langCount = new Set(projects.map(p => p.language).filter(Boolean)).size;
   const stars     = projects.reduce((s, p) => s + p.stars, 0);
+  const ready     = !!(dataset || ossTotal !== null);
 
   const stats = [
-    { id: 'repos', val: projects.length,    label: 'Public Repos'  },
-    { id: 'langs', val: langCount,           label: 'Languages'     },
-    { id: 'stars', val: stars,               label: 'Total Stars'   },
-    { id: 'oss',   val: ossTotal ?? 0,       label: 'OSS PRs Merged'},
+    { id: 'repos', val: projects.length,  label: 'Public Repos'   },
+    { id: 'langs', val: langCount,         label: 'Languages'      },
+    { id: 'stars', val: stars,             label: 'Total Stars'    },
+    { id: 'oss',   val: ossTotal ?? 0,     label: 'OSS PRs Merged' },
   ];
 
   return (
-    <section className="bg-bg-surface border-y border-white/[0.04] py-4"
+    <section className="bg-bg-surface border-y border-white/[0.04] py-3 sm:py-4"
              aria-label="Repository statistics">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <dl className="flex flex-wrap items-center justify-center">
+        {/* 2-col grid on xs, single row on sm+ */}
+        <dl className="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center sm:justify-center">
           {stats.map(({ id, val, label }, i) => (
             <div key={id} className="flex items-center">
-              <div className="flex flex-col items-center gap-0.5 px-6 py-3 flex-1 min-w-[7rem]">
-                <dd className="text-3xl sm:text-4xl font-extrabold text-slate-100 tabular-nums">
-                  {dataset || ossTotal !== null ? val : '—'}
+              <div className="flex flex-col items-center gap-0.5 px-4 sm:px-6 py-3 w-full">
+                <dd className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-100 tabular-nums
+                               transition-all duration-500">
+                  {ready ? val : '—'}
                 </dd>
-                <dt className="text-[0.65rem] font-semibold text-slate-600 uppercase tracking-widest">
+                <dt className="text-[0.6rem] font-semibold text-slate-600 uppercase tracking-widest text-center">
                   {label}
                 </dt>
               </div>
               {i < stats.length - 1 && (
-                <div className="w-px h-9 bg-white/[0.04] self-center flex-shrink-0 hidden sm:block" />
+                <div className="w-px h-8 bg-white/[0.04] self-center flex-shrink-0 hidden sm:block" />
               )}
             </div>
           ))}
-          <div className="w-px h-9 bg-white/[0.04] self-center flex-shrink-0 hidden sm:block" />
-          <div className="flex flex-col items-center gap-0.5 px-6 py-3 min-w-[7rem]">
-            <dd className="flex items-center gap-2 text-2xl sm:text-3xl font-extrabold text-slate-100">
-              <span className="live-dot" />Live
+          <div className="w-px h-8 bg-white/[0.04] self-center flex-shrink-0 hidden sm:block" />
+          {/* Live sync tile — full width on mobile, inline on sm+ */}
+          <div className="col-span-2 sm:col-span-1 flex sm:block items-center justify-center
+                          gap-0.5 px-4 sm:px-6 py-3 border-t border-white/[0.04] sm:border-0">
+            <dd className="flex items-center gap-2 text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-100
+                           sm:flex-col sm:items-center sm:gap-2">
+              <span className="live-dot" />
+              <span>Live</span>
             </dd>
-            <dt className="text-[0.65rem] font-semibold text-slate-600 uppercase tracking-widest">
+            <dt className="text-[0.6rem] font-semibold text-slate-600 uppercase tracking-widest ml-2 sm:ml-0
+                           sm:text-center sm:block">
               GitHub Sync
             </dt>
           </div>
@@ -244,7 +252,7 @@ export default function Home() {
                    className="group flex flex-col gap-3 p-5 rounded-2xl border transition-all duration-300
                               hover:-translate-y-1 bg-white/[0.02] border-white/[0.06]
                               hover:border-emerald-500/30 hover:bg-white/[0.04] reveal"
-                   style={{ animationDelay: `${i * 60}ms` }}>
+                   style={{ transitionDelay: `${i * 80}ms` }}>
 
                   {/* Repo + stars */}
                   <div className="flex items-center gap-2 min-w-0">
@@ -276,25 +284,25 @@ export default function Home() {
 
                   {/* Code impact */}
                   {(c.additions > 0 || c.deletions > 0 || c.changedFiles > 0) && (
-                    <div className="flex items-center gap-3 flex-wrap py-2 px-3 rounded-lg
+                    <div className="flex items-center gap-2 flex-wrap py-2 px-3 rounded-lg
                                     bg-white/[0.03] border border-white/[0.04]">
                       {c.additions > 0 && (
-                        <span className="text-[11px] font-mono font-semibold text-emerald-400">
+                        <span className="text-[11px] font-mono font-semibold text-emerald-400 whitespace-nowrap">
                           +{c.additions.toLocaleString()}
                         </span>
                       )}
                       {c.deletions > 0 && (
-                        <span className="text-[11px] font-mono font-semibold text-rose-400">
+                        <span className="text-[11px] font-mono font-semibold text-rose-400 whitespace-nowrap">
                           -{c.deletions.toLocaleString()}
                         </span>
                       )}
                       {c.changedFiles > 0 && (
-                        <span className="text-[11px] text-slate-500">
+                        <span className="text-[11px] text-slate-500 whitespace-nowrap">
                           {c.changedFiles} file{c.changedFiles !== 1 ? 's' : ''}
                         </span>
                       )}
                       {c.commits > 0 && (
-                        <span className="text-[11px] text-slate-500">
+                        <span className="text-[11px] text-slate-500 whitespace-nowrap">
                           {c.commits} commit{c.commits !== 1 ? 's' : ''}
                         </span>
                       )}
@@ -350,7 +358,9 @@ export default function Home() {
             )}
 
             {actSt === 'ready' && activityData && activityData.weeks.length > 0 && (
-              <div className="p-5 sm:p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
+              <div className="p-4 sm:p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]
+                              transition-all duration-500 animate-fade-up-1"
+                   style={{ touchAction: 'pan-y' }}>
                 <ContributionCalendar dataset={activityData} />
               </div>
             )}

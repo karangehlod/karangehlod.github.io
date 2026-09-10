@@ -469,19 +469,22 @@ export default function ProjectPage() {
             </div>
           )}
 
-          {/* CTAs */}
-          <div className="flex flex-wrap gap-3">
+          {/* CTAs — stack full-width on mobile, inline on sm+ */}
+          <div className="flex flex-col sm:flex-row gap-3">
             <a href={project.url} target="_blank" rel="noopener noreferrer"
-               className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold
-                          text-white gradient-bg shadow-lg shadow-indigo-500/25
-                          hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200">
+               className="flex items-center justify-center gap-2 px-6 py-3.5 sm:py-3
+                          rounded-full text-sm font-semibold text-white gradient-bg
+                          shadow-lg shadow-indigo-500/25
+                          hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200
+                          active:scale-[0.98]">
               <GithubIcon className="w-4 h-4" />
               View on GitHub
             </a>
             {project.homepage && (
               <a href={project.homepage} target="_blank" rel="noopener noreferrer"
-                 className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold
-                            border transition-all duration-200 hover:-translate-y-0.5"
+                 className="flex items-center justify-center gap-2 px-6 py-3.5 sm:py-3
+                            rounded-full text-sm font-semibold border
+                            transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98]"
                  style={{
                    color: 'var(--c-text1)',
                    borderColor: 'var(--c-border)',

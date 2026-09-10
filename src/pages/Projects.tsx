@@ -134,8 +134,8 @@ export default function Projects() {
                      target="_blank" rel="noopener noreferrer"
                      className="group flex flex-col gap-3 p-5 rounded-2xl border transition-all duration-300
                                 hover:-translate-y-1 bg-white/[0.02] border-white/[0.06]
-                                hover:border-emerald-500/30 hover:bg-white/[0.04]"
-                     style={{ animationDelay: `${i * 40}ms` }}>
+                                hover:border-emerald-500/30 hover:bg-white/[0.04] reveal"
+                     style={{ transitionDelay: `${i * 70}ms` }}>
 
                     {/* Repo name */}
                     <div className="flex items-center gap-2 min-w-0">
@@ -167,25 +167,25 @@ export default function Projects() {
 
                     {/* Code impact row */}
                     {(c.additions > 0 || c.deletions > 0 || c.changedFiles > 0) && (
-                      <div className="flex items-center gap-3 flex-wrap py-2 px-3 rounded-lg
+                      <div className="flex items-center gap-2 flex-wrap py-2 px-3 rounded-lg
                                       bg-white/[0.03] border border-white/[0.04]">
                         {c.additions > 0 && (
-                          <span className="text-[11px] font-mono font-semibold text-emerald-400">
+                          <span className="text-[11px] font-mono font-semibold text-emerald-400 whitespace-nowrap">
                             +{c.additions.toLocaleString()}
                           </span>
                         )}
                         {c.deletions > 0 && (
-                          <span className="text-[11px] font-mono font-semibold text-rose-400">
+                          <span className="text-[11px] font-mono font-semibold text-rose-400 whitespace-nowrap">
                             -{c.deletions.toLocaleString()}
                           </span>
                         )}
                         {c.changedFiles > 0 && (
-                          <span className="text-[11px] text-slate-500">
+                          <span className="text-[11px] text-slate-500 whitespace-nowrap">
                             {c.changedFiles} file{c.changedFiles !== 1 ? 's' : ''}
                           </span>
                         )}
                         {c.commits > 0 && (
-                          <span className="text-[11px] text-slate-500">
+                          <span className="text-[11px] text-slate-500 whitespace-nowrap">
                             {c.commits} commit{c.commits !== 1 ? 's' : ''}
                           </span>
                         )}

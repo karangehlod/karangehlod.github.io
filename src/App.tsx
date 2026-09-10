@@ -70,6 +70,24 @@ function RevealObserver() {
   return null;
 }
 
+function AnimatedPage() {
+  const { pathname } = useLocation();
+  return (
+    <div key={pathname} className="animate-page-enter">
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/"               element={<Home />} />
+          <Route path="/about"          element={<About />} />
+          <Route path="/projects"       element={<Projects />} />
+          <Route path="/projects/:slug" element={<ProjectPage />} />
+          <Route path="/publications"   element={<Publications />} />
+          <Route path="*"               element={<Home />} />
+        </Routes>
+      </Suspense>
+    </div>
+  );
+}
+
 function Layout() {
   return (
     <div className="min-h-screen" style={{ background: 'var(--c-bg)', color: 'var(--c-text1)' }}>
@@ -77,16 +95,7 @@ function Layout() {
       <main>
         <ScrollToTop />
         <RevealObserver />
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/"             element={<Home />} />
-            <Route path="/about"        element={<About />} />
-            <Route path="/projects"         element={<Projects />} />
-            <Route path="/projects/:slug"   element={<ProjectPage />} />
-            <Route path="/publications"     element={<Publications />} />
-            <Route path="*"             element={<Home />} />
-          </Routes>
-        </Suspense>
+        <AnimatedPage />
       </main>
       <Footer />
     </div>

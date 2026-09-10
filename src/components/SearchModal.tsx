@@ -20,9 +20,10 @@ interface Result {
 }
 
 const PAGES: Result[] = [
-  { type: 'page', title: 'Home',     subtitle: 'Hero, featured projects, about teaser', to: '/' },
-  { type: 'page', title: 'About',    subtitle: 'Bio, experience, skills, certifications, awards', to: '/about' },
-  { type: 'page', title: 'Projects', subtitle: 'Portfolio & GitHub repositories', to: '/projects' },
+  { type: 'page', title: 'Home',         subtitle: 'Hero, featured projects, about teaser', to: '/' },
+  { type: 'page', title: 'About',        subtitle: 'Bio, experience, skills, certifications', to: '/about' },
+  { type: 'page', title: 'Projects',     subtitle: 'Portfolio & GitHub repositories', to: '/projects' },
+  { type: 'page', title: 'Publications', subtitle: 'Academic & technical publications', to: '/publications' },
 ];
 
 export function SearchModal({ open, onClose, githubProjects }: Props) {
@@ -54,7 +55,6 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
   const q = query.toLowerCase().trim();
 
   const results: Result[] = q.length < 1 ? PAGES : [
-    // GitHub repos
     ...githubProjects
       .filter(p =>
         p.name.toLowerCase().includes(q) ||
@@ -71,7 +71,6 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
         href: p.url,
         to: '/projects',
       })),
-    // Portfolio
     ...portfolioProjects
       .filter(p =>
         p.title.toLowerCase().includes(q) ||
@@ -87,7 +86,6 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
         tag: p.tags[0],
         to: '/projects',
       })),
-    // Pages
     ...PAGES.filter(p =>
       p.title.toLowerCase().includes(q) || p.subtitle.toLowerCase().includes(q)
     ),
@@ -115,19 +113,24 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
   };
 
   return (
+    /* Backdrop — full-screen on mobile (no centering padding), centered on sm+ */
     <div
-      className="fixed inset-0 z-[300] flex items-start justify-center pt-[10vh] px-4
-                 bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-[300] flex flex-col sm:flex-none sm:flex sm:items-start
+                 sm:justify-center sm:pt-[10vh] sm:px-4
+                 bg-black/70 backdrop-blur-sm"
       onClick={onClose}
     >
+      {/* Modal — full-width sheet anchored to top on mobile, card on sm+ */}
       <div
-        className="w-full max-w-xl rounded-2xl overflow-hidden shadow-2xl
-                   border border-indigo-500/20 animate-fade-up-1"
+        className="w-full sm:max-w-xl
+                   rounded-b-2xl sm:rounded-2xl overflow-hidden shadow-2xl
+                   border-b border-x sm:border border-indigo-500/20
+                   animate-fade-up-1"
         style={{ background: 'var(--c-surf)' }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Input */}
-        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-white/[0.06]">
+        {/* Input row */}
+        <div className="flex items-center gap-3 px-4 py-4 border-b border-white/[0.06]">
           <svg className="w-4 h-4 text-slate-500 flex-shrink-0" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -141,13 +144,18 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-600"
             style={{ color: 'var(--c-text1)' }}
           />
-          <button onClick={onClose} className="text-slate-600 hover:text-slate-400 transition-colors">
+          <button
+            onClick={onClose}
+            className="p-1 rounded-lg text-slate-600 hover:text-slate-400 hover:bg-white/[0.04]
+                       transition-colors"
+            aria-label="Close search"
+          >
             <XIcon className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Results */}
-        <div className="max-h-80 overflow-y-auto">
+        {/* Results — larger max-height on mobile to account for keyboard */}
+        <div className="max-h-[50vh] sm:max-h-80 overflow-y-auto overscroll-contain">
           {results.length === 0 ? (
             <p className="px-4 py-8 text-center text-sm text-slate-600">
               No results for "<span className="text-slate-400">{query}</span>"
@@ -165,8 +173,9 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
                 <li key={i}>
                   <button
                     onClick={() => handleResult(r)}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-left
-                               hover:bg-indigo-500/8 transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-3.5 text-left
+                               hover:bg-indigo-500/[0.08] active:bg-indigo-500/[0.12]
+                               transition-colors"
                   >
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate" style={{ color: 'var(--c-text1)' }}>
@@ -189,8 +198,8 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
 
         <div className="px-4 py-2.5 border-t border-white/[0.05]">
           <p className="text-[0.65rem] text-slate-600">
-            Press <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-500">↵</kbd> to select ·
-            <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-500">Esc</kbd> to close
+            <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-500">↵</kbd> select ·
+            <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-500 ml-1">Esc</kbd> close
           </p>
         </div>
       </div>

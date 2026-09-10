@@ -118,7 +118,9 @@ export default function Publications() {
                           </span>
                         )}
                         {pub.doi && (
-                          <span className="font-mono" style={{ color: 'var(--c-text3)' }}>
+                          <span className="font-mono truncate max-w-[180px] sm:max-w-xs"
+                                title={`DOI: ${pub.doi}`}
+                                style={{ color: 'var(--c-text3)' }}>
                             DOI: {pub.doi}
                           </span>
                         )}
