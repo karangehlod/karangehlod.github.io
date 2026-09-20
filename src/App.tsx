@@ -13,8 +13,9 @@ const Publications = lazy(() => import('./pages/Publications'));
 
 function PageLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--c-bg)' }}>
-      <div className="w-8 h-8 rounded-full border-2 border-indigo-500/20 border-t-indigo-400 animate-spin" />
+    <div className="min-h-screen flex items-center justify-center bg-ground">
+      <div className="w-8 h-8 rounded-full border-2 border-line-strong animate-spin"
+           style={{ borderTopColor: 'var(--signal)' }} />
     </div>
   );
 }
@@ -25,47 +26,38 @@ function ScrollToTop() {
   return null;
 }
 
-/* Global observers — runs on every route change */
-function RevealObserver() {
+/* Adds .in to fx-* elements as they enter the viewport (one-shot).
+   A MutationObserver picks up async-loaded content (repos, contributions). */
+const FX_SELECTOR = '.fx-rise, .fx-head, .fx-rule, .cal-sweep';
+
+function FxObserver() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // 1. .reveal — one-shot fade-in for general elements (non-home pages)
-    const revealIo = new IntersectionObserver(
+    const io = new IntersectionObserver(
       entries => entries.forEach(e => {
         if (e.isIntersecting) {
-          e.target.classList.add('revealed');
-          revealIo.unobserve(e.target);
+          e.target.classList.add('in');
+          io.unobserve(e.target);
         }
       }),
-      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.1, rootMargin: '0px 0px -30px 0px' }
     );
 
-    // 2. .section-reveal — replays every time element enters/leaves view
-    const sectionIo = new IntersectionObserver(
-      entries => entries.forEach(e => {
-        e.target.classList.toggle('in', e.isIntersecting);
-      }),
-      { threshold: 0.12 }
-    );
-
-    const observeAll = () => {
-      document.querySelectorAll('.reveal:not(.revealed)').forEach(el => revealIo.observe(el));
-      document.querySelectorAll('.section-reveal').forEach(el => sectionIo.observe(el));
+    const observeAll = (root: ParentNode) => {
+      root.querySelectorAll(`${FX_SELECTOR}`).forEach(el => {
+        if (!el.classList.contains('in')) io.observe(el);
+      });
     };
 
-    const timer = setTimeout(observeAll, 80);
+    const timer = setTimeout(() => observeAll(document.body), 60);
 
     const mo = new MutationObserver(mutations => {
       for (const m of mutations) {
         m.addedNodes.forEach(node => {
           if (!(node instanceof Element)) return;
-          if (node.classList.contains('reveal') && !node.classList.contains('revealed'))
-            revealIo.observe(node);
-          if (node.classList.contains('section-reveal'))
-            sectionIo.observe(node);
-          node.querySelectorAll('.reveal:not(.revealed)').forEach(el => revealIo.observe(el));
-          node.querySelectorAll('.section-reveal').forEach(el => sectionIo.observe(el));
+          if (node.matches(FX_SELECTOR) && !node.classList.contains('in')) io.observe(node);
+          observeAll(node);
         });
       }
     });
@@ -73,8 +65,7 @@ function RevealObserver() {
 
     return () => {
       clearTimeout(timer);
-      revealIo.disconnect();
-      sectionIo.disconnect();
+      io.disconnect();
       mo.disconnect();
     };
   }, [pathname]);
@@ -103,13 +94,13 @@ function AnimatedPage() {
 function Layout() {
   const { pathname } = useLocation();
   return (
-    <div className="min-h-screen" style={{ background: 'var(--c-bg)', color: 'var(--c-text1)' }}>
+    <div className="min-h-screen bg-ground text-ink">
       <Nav />
       {/* SectionDots lives here — outside AnimatedPage so transform on page-enter never breaks fixed positioning */}
       {pathname === '/' && <SectionDots />}
       <main>
         <ScrollToTop />
-        <RevealObserver />
+        <FxObserver />
         <AnimatedPage />
       </main>
       <Footer />

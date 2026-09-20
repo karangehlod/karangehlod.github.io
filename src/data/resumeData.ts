@@ -65,14 +65,14 @@ export const certifications: Certification[] = [
   {
     name: 'AI-102 Azure AI Engineer Associate',
     issuer: 'Microsoft',
-    url: 'https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-engineer/',
+    url: 'https://learn.microsoft.com/api/credentials/share/en-us/KaranGehlod-9113/A1C427D0B417BA2A?sharingId=E9E4C26FC21918C4',
     gradFrom: '#6366f1',
     gradTo: '#818cf8',
   },
   {
     name: 'Az-900 Azure Fundamentals',
     issuer: 'Microsoft',
-    url: 'https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/',
+    url: 'https://learn.microsoft.com/api/credentials/share/en-us/KaranGehlod-9113/932EABE63C17C88E?sharingId=E9E4C26FC21918C4',
     gradFrom: '#0ea5e9',
     gradTo: '#38bdf8',
   },

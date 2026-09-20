@@ -82,7 +82,7 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
       .map(p => ({
         type: 'portfolio' as const,
         title: p.title,
-        subtitle: `${p.company} · ${p.period}`,
+        subtitle: `${p.company}, ${p.period}`,
         tag: p.tags[0],
         to: '/projects',
       })),
@@ -106,32 +106,23 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
     page:      'Page',
   };
 
-  const TYPE_COLOR: Record<Result['type'], string> = {
-    github:    'text-sky-400 bg-sky-500/10 border-sky-500/20',
-    portfolio: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
-    page:      'text-slate-400 bg-white/5 border-white/10',
-  };
-
   return (
     /* Backdrop — full-screen on mobile (no centering padding), centered on sm+ */
     <div
       className="fixed inset-0 z-[300] flex flex-col sm:flex-none sm:flex sm:items-start
-                 sm:justify-center sm:pt-[10vh] sm:px-4
-                 bg-black/70 backdrop-blur-sm"
+                 sm:justify-center sm:pt-[10vh] sm:px-4 bg-black/60"
       onClick={onClose}
     >
-      {/* Modal — full-width sheet anchored to top on mobile, card on sm+ */}
+      {/* Modal — full-width sheet anchored to top on mobile, panel on sm+ */}
       <div
-        className="w-full sm:max-w-xl
-                   rounded-b-2xl sm:rounded-2xl overflow-hidden shadow-2xl
-                   border-b border-x sm:border border-indigo-500/20
-                   animate-fade-up-1"
-        style={{ background: 'var(--c-surf)' }}
+        className="w-full sm:max-w-xl bg-panel overflow-hidden
+                   rounded-b-lg sm:rounded-lg
+                   border-b border-x sm:border border-line-strong animate-page-enter"
         onClick={e => e.stopPropagation()}
       >
         {/* Input row */}
-        <div className="flex items-center gap-3 px-4 py-4 border-b border-white/[0.06]">
-          <svg className="w-4 h-4 text-slate-500 flex-shrink-0" viewBox="0 0 24 24" fill="none"
+        <div className="flex items-center gap-3 px-4 py-4 border-b border-line">
+          <svg className="w-4 h-4 text-fnt flex-shrink-0" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
@@ -141,13 +132,11 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
             placeholder="Search projects, skills, sections…"
             value={query}
             onChange={e => setQuery(e.target.value)}
-            className="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-600"
-            style={{ color: 'var(--c-text1)' }}
+            className="flex-1 bg-transparent text-sm outline-none text-ink placeholder:text-fnt"
           />
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-600 hover:text-slate-400 hover:bg-white/[0.04]
-                       transition-colors"
+            className="p-1 rounded text-fnt hover:text-ink transition-colors"
             aria-label="Close search"
           >
             <XIcon className="w-4 h-4" />
@@ -157,14 +146,14 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
         {/* Results — larger max-height on mobile to account for keyboard */}
         <div className="max-h-[50vh] sm:max-h-80 overflow-y-auto overscroll-contain">
           {results.length === 0 ? (
-            <p className="px-4 py-8 text-center text-sm text-slate-600">
-              No results for "<span className="text-slate-400">{query}</span>"
+            <p className="px-4 py-8 text-center text-sm text-fnt">
+              No results for "<span className="text-mut">{query}</span>"
             </p>
           ) : (
             <ul>
               {q.length < 1 && (
                 <li className="px-4 pt-3 pb-1">
-                  <span className="text-[0.65rem] font-semibold uppercase tracking-widest text-slate-600">
+                  <span className="text-xs font-medium text-fnt">
                     Quick navigation
                   </span>
                 </li>
@@ -174,19 +163,17 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
                   <button
                     onClick={() => handleResult(r)}
                     className="w-full flex items-center gap-3 px-4 py-3.5 text-left
-                               hover:bg-indigo-500/[0.08] active:bg-indigo-500/[0.12]
-                               transition-colors"
+                               hover:bg-panel-hi transition-colors"
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate" style={{ color: 'var(--c-text1)' }}>
+                      <p className="text-sm font-medium truncate text-ink">
                         {r.title}
                       </p>
-                      <p className="text-xs truncate mt-0.5" style={{ color: 'var(--c-text3)' }}>
+                      <p className="text-xs truncate mt-0.5 text-fnt">
                         {r.subtitle}
                       </p>
                     </div>
-                    <span className={`px-2 py-0.5 rounded-full text-[0.65rem] font-semibold
-                                     border flex-shrink-0 ${TYPE_COLOR[r.type]}`}>
+                    <span className="chip flex-shrink-0">
                       {r.tag ?? TYPE_LABEL[r.type]}
                     </span>
                   </button>
@@ -196,10 +183,10 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
           )}
         </div>
 
-        <div className="px-4 py-2.5 border-t border-white/[0.05]">
-          <p className="text-[0.65rem] text-slate-600">
-            <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-500">↵</kbd> select ·
-            <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-500 ml-1">Esc</kbd> close
+        <div className="px-4 py-2.5 border-t border-line">
+          <p className="text-xs text-fnt">
+            <kbd className="px-1.5 py-0.5 rounded border border-line font-mono">↵</kbd> select
+            <kbd className="px-1.5 py-0.5 rounded border border-line font-mono ml-3">Esc</kbd> close
           </p>
         </div>
       </div>

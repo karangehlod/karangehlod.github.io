@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useProjects } from '../hooks/useProjects';
 import { useContributions } from '../hooks/useContributions';
-import { ProjectCard } from '../components/ProjectCard';
+import { ProjectCard, RepoRow } from '../components/ProjectCard';
 import { PortfolioCard } from '../components/PortfolioCard';
 import { portfolioProjects } from '../data/portfolioProjects';
+import { GithubIcon } from '../components/Icons';
 import { getLangColor, formatMonth } from '../utils/languageColors';
 
 function plainText(md: string): string {
@@ -29,10 +30,19 @@ function Skeletons({ count, tall = false }: { count: number; tall?: boolean }) {
   );
 }
 
+const SORTS = [
+  { id: 'recent', label: 'Recent' },
+  { id: 'stars',  label: 'Stars'  },
+  { id: 'name',   label: 'Name'   },
+] as const;
+type SortId = typeof SORTS[number]['id'];
+
 export default function Projects() {
   const { dataset, status } = useProjects();
   const { dataset: contribData, status: contribStatus } = useContributions();
   const [activeFilter, setActiveFilter] = useState('');
+  const [query, setQuery] = useState('');
+  const [sortBy, setSortBy] = useState<SortId>('recent');
 
   const projects  = dataset?.projects ?? [];
   const featured  = dataset?.featuredProjects ?? [];
@@ -43,90 +53,92 @@ export default function Projects() {
     [projects]
   );
 
-  const filtered = useMemo(
-    () => activeFilter ? projects.filter(p => p.language === activeFilter) : projects,
-    [projects, activeFilter]
-  );
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const list = projects.filter(p =>
+      (!activeFilter || p.language === activeFilter) &&
+      (!q ||
+        p.name.toLowerCase().includes(q) ||
+        (p.description ?? '').toLowerCase().includes(q) ||
+        p.topics.some(t => t.toLowerCase().includes(q)))
+    );
+    return [...list].sort((a, b) => {
+      if (sortBy === 'stars') return b.stars - a.stars || a.name.localeCompare(b.name);
+      if (sortBy === 'name')  return a.name.localeCompare(b.name);
+      return Date.parse(b.pushedAt || b.updatedAt) - Date.parse(a.pushedAt || a.updatedAt);
+    });
+  }, [projects, activeFilter, query, sortBy]);
 
   return (
     <>
       {/* ── Page hero ── */}
-      <section className="relative pt-40 pb-20 overflow-hidden" aria-labelledby="projects-heading">
-        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-          <div className="hero-blob w-[600px] h-[600px] bg-indigo-600/20 -top-40 -left-28 animate-blob" />
-          <div className="hero-blob w-[400px] h-[400px] bg-sky-600/15 top-0 right-0 animate-blob-slow"
-               style={{ animationDelay: '-7s' }} />
-          <div className="dot-grid" />
-        </div>
+      <section className="relative pt-36 pb-16 overflow-hidden" aria-labelledby="projects-heading">
+        <div className="draft-grid" aria-hidden="true" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
-          <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-3 animate-fade-up-1">
-            Open source
-          </p>
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="node-rule fx-rule mb-8"><span>Projects</span></div>
           <h1 id="projects-heading"
-              className="text-5xl sm:text-7xl font-black tracking-tight leading-none mb-6 animate-fade-up-2">
-            <span className="text-slate-100">All</span>
-            <span className="gradient-text"> Projects</span>
+              className="display-wide text-5xl sm:text-7xl text-ink mb-6 fx-head">
+            All projects
           </h1>
-          <p className="text-xl text-slate-400 leading-relaxed max-w-2xl mb-8 animate-fade-up-3">
-            Every public repository — discovered live from the GitHub API at each build.
-            No stale lists, no manual curation of existence.
+          <p className="text-lg text-mut leading-relaxed max-w-[56ch] mb-8 fx-rise" style={{ '--fxd': '150ms' } as React.CSSProperties}>
+            Every public repository, discovered live from the GitHub API at each
+            build — no stale lists and no manual curation.
           </p>
-          <div className="flex flex-wrap gap-3 animate-fade-up-4">
-            <span className="flex items-center gap-2 px-4 py-2 rounded-full text-sm
-                             bg-white/[0.04] border border-white/[0.07] text-slate-300">
-              <span className="live-dot" />Live GitHub sync
-            </span>
-            <span className="px-4 py-2 rounded-full text-sm bg-white/[0.04]
-                             border border-white/[0.07] text-slate-400">
-              <span className="font-bold text-slate-100">
+
+          {/* Inline readout facts */}
+          <dl className="flex flex-wrap gap-x-10 gap-y-4 border-y border-line py-4 max-w-2xl fx-rise" style={{ '--fxd': '250ms' } as React.CSSProperties}>
+            <div>
+              <dd className="font-mono text-xl font-semibold text-ink tabular-nums">
                 {status === 'ready' ? projects.length : '—'}
-              </span> repositories
-            </span>
-            <span className="px-4 py-2 rounded-full text-sm bg-white/[0.04]
-                             border border-white/[0.07] text-slate-400">
-              <span className="font-bold text-slate-100">
+              </dd>
+              <dt className="text-xs text-fnt">repositories</dt>
+            </div>
+            <div>
+              <dd className="font-mono text-xl font-semibold text-ink tabular-nums">
                 {status === 'ready' ? langCount : '—'}
-              </span> languages
-            </span>
+              </dd>
+              <dt className="text-xs text-fnt">languages</dt>
+            </div>
             {contribStatus === 'ready' && contribData && (
-              <span className="px-4 py-2 rounded-full text-sm bg-emerald-500/[0.07]
-                               border border-emerald-500/20 text-slate-400">
-                <span className="font-bold text-emerald-400">
+              <div>
+                <dd className="font-mono text-xl font-semibold text-tel tabular-nums">
                   {contribData.total}
-                </span> OSS PRs merged
-              </span>
+                </dd>
+                <dt className="text-xs text-fnt">OSS PRs merged</dt>
+              </div>
             )}
-          </div>
+            <div>
+              <dd className="flex items-center gap-2 font-mono text-xl font-semibold text-ink">
+                <span className="w-2 h-2 rounded-full bg-tel animate-pulse" aria-hidden="true" />
+                live
+              </dd>
+              <dt className="text-xs text-fnt">GitHub sync</dt>
+            </div>
+          </dl>
         </div>
       </section>
 
-      {/* ── Open-source contributions — elevated to top position ── */}
+      {/* ── Open-source contributions ── */}
       {contribStatus !== 'error' && (
-        <section className="py-16 border-t border-white/[0.04]" aria-labelledby="contrib-heading">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <header className="mb-10 reveal">
-              <p className="text-xs font-bold tracking-[0.14em] uppercase text-emerald-400 mb-2">
-                Community work
-              </p>
-              <div className="flex items-end justify-between flex-wrap gap-4">
-                <div>
-                  <h2 id="contrib-heading"
-                      className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">
-                    Open-source contributions
-                  </h2>
-                  <p className="text-slate-500 text-sm max-w-xl">
-                    Merged pull requests to external repositories — real code shipped to
-                    production systems used by other developers.
-                  </p>
-                </div>
-                <a href="https://github.com/pulls?q=is%3Apr+is%3Amerged+author%3Akarangehlod+-user%3Akarangehlod"
-                   target="_blank" rel="noopener noreferrer"
-                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-400
-                              hover:text-indigo-300 transition-colors whitespace-nowrap">
-                  View on GitHub →
-                </a>
+        <section className="py-16" aria-labelledby="contrib-heading">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="node-rule fx-rule mb-8"><span>Open source</span></div>
+            <header className="mb-10 flex items-end justify-between flex-wrap gap-4">
+              <div>
+                <h2 id="contrib-heading" className="display text-3xl sm:text-4xl text-ink mb-2 fx-head">
+                  Contributions to external projects
+                </h2>
+                <p className="text-fnt text-sm max-w-[60ch]">
+                  Merged pull requests to repositories I don't own — real code
+                  shipped to tools other developers depend on.
+                </p>
               </div>
+              <a href="https://github.com/pulls?q=is%3Apr+is%3Amerged+author%3Akarangehlod+-user%3Akarangehlod"
+                 target="_blank" rel="noopener noreferrer"
+                 className="tlink text-xs font-semibold whitespace-nowrap">
+                View on GitHub
+              </a>
             </header>
 
             {contribStatus === 'loading' && (
@@ -136,7 +148,7 @@ export default function Projects() {
             )}
 
             {contribStatus === 'ready' && contribData && contribData.contributions.length === 0 && (
-              <p className="text-slate-500 text-sm">No public contributions found yet.</p>
+              <p className="text-fnt text-sm">No public contributions found yet.</p>
             )}
 
             {contribStatus === 'ready' && contribData && contribData.contributions.length > 0 && (
@@ -145,60 +157,51 @@ export default function Projects() {
                   <a key={c.id}
                      href={c.url}
                      target="_blank" rel="noopener noreferrer"
-                     className="group flex flex-col gap-3 p-5 rounded-2xl border transition-all duration-300
-                                hover:-translate-y-1 bg-white/[0.02] border-white/[0.06]
-                                hover:border-emerald-500/30 hover:bg-white/[0.04] reveal"
-                     style={{ transitionDelay: `${i * 70}ms` }}>
+                     className="panel panel-hover group flex flex-col gap-3 p-5 fx-rise"
+                     style={{ '--fxd': `${i * 90}ms` } as React.CSSProperties}>
 
                     {/* Repo name */}
                     <div className="flex items-center gap-2 min-w-0">
-                      <svg className="w-3.5 h-3.5 flex-shrink-0 text-slate-500" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-                      </svg>
-                      <a href={c.repoUrl} target="_blank" rel="noopener noreferrer"
-                         className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 truncate transition-colors"
-                         onClick={e => e.stopPropagation()}>
-                        {c.repo}
-                      </a>
+                      <GithubIcon className="w-3.5 h-3.5 flex-shrink-0 text-fnt" />
+                      <span className="text-xs font-semibold text-mut truncate">{c.repo}</span>
                       {c.stars > 0 && (
-                        <span className="ml-auto text-xs text-slate-600 flex-shrink-0">★ {c.stars}</span>
+                        <span className="ml-auto text-xs font-mono text-fnt flex-shrink-0">★ {c.stars}</span>
                       )}
                     </div>
 
                     {/* PR title */}
-                    <p className="text-sm font-medium text-slate-200 leading-snug
-                                  group-hover:text-white transition-colors flex-1 line-clamp-2">
+                    <p className="text-sm font-medium text-ink leading-snug flex-1 line-clamp-2
+                                  group-hover:text-signal transition-colors">
                       {c.title}
                     </p>
 
-                    {/* PR body excerpt — strip markdown before display */}
+                    {/* PR body excerpt */}
                     {c.body && (
-                      <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
+                      <p className="text-xs text-fnt leading-relaxed line-clamp-2">
                         {plainText(c.body)}
                       </p>
                     )}
 
                     {/* Code impact row */}
                     {(c.additions > 0 || c.deletions > 0 || c.changedFiles > 0) && (
-                      <div className="flex items-center gap-2 flex-wrap py-2 px-3 rounded-lg
-                                      bg-white/[0.03] border border-white/[0.04]">
+                      <div className="flex items-center gap-3 flex-wrap font-mono text-[11px]">
                         {c.additions > 0 && (
-                          <span className="text-[11px] font-mono font-semibold text-emerald-400 whitespace-nowrap">
+                          <span className="font-semibold text-tel whitespace-nowrap">
                             +{c.additions.toLocaleString()}
                           </span>
                         )}
                         {c.deletions > 0 && (
-                          <span className="text-[11px] font-mono font-semibold text-rose-400 whitespace-nowrap">
+                          <span className="font-semibold text-alert whitespace-nowrap">
                             -{c.deletions.toLocaleString()}
                           </span>
                         )}
                         {c.changedFiles > 0 && (
-                          <span className="text-[11px] text-slate-500 whitespace-nowrap">
+                          <span className="text-fnt whitespace-nowrap">
                             {c.changedFiles} file{c.changedFiles !== 1 ? 's' : ''}
                           </span>
                         )}
                         {c.commits > 0 && (
-                          <span className="text-[11px] text-slate-500 whitespace-nowrap">
+                          <span className="text-fnt whitespace-nowrap">
                             {c.commits} commit{c.commits !== 1 ? 's' : ''}
                           </span>
                         )}
@@ -207,23 +210,18 @@ export default function Projects() {
 
                     {/* Footer row */}
                     <div className="flex items-center justify-between gap-2 mt-auto pt-2
-                                    border-t border-white/[0.05]">
-                      <div className="flex items-center gap-3 flex-wrap">
+                                    border-t border-line">
+                      <div className="flex items-center gap-3 text-xs text-fnt flex-wrap">
                         {c.language && (
-                          <span className="flex items-center gap-1 text-xs text-slate-500">
+                          <span className="flex items-center gap-1">
                             <span className="w-2 h-2 rounded-full flex-shrink-0"
                                   style={{ background: getLangColor(c.language) }} />
                             {c.language}
                           </span>
                         )}
-                        {c.mergedAt && (
-                          <span className="text-xs text-slate-500">{formatMonth(c.mergedAt)}</span>
-                        )}
+                        {c.mergedAt && <span className="font-mono">{formatMonth(c.mergedAt)}</span>}
                       </div>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.65rem]
-                                       font-semibold bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 flex-shrink-0">
-                        ✓ Merged
-                      </span>
+                      <span className="chip chip-ok flex-shrink-0">Merged</span>
                     </div>
                   </a>
                 ))}
@@ -233,24 +231,22 @@ export default function Projects() {
         </section>
       )}
 
-      {/* ── Professional Portfolio ── */}
-      <section className="py-16 border-t border-white/[0.04]" aria-labelledby="portfolio-heading">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <header className="mb-12">
-            <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-2">
-              Professional work
-            </p>
-            <h2 id="portfolio-heading"
-                className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">
+      {/* ── Professional portfolio ── */}
+      <section className="py-16" aria-labelledby="portfolio-heading">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="node-rule fx-rule mb-8"><span>Professional work</span></div>
+          <header className="mb-10">
+            <h2 id="portfolio-heading" className="display text-3xl sm:text-4xl text-ink mb-2 fx-head">
               Portfolio projects
             </h2>
-            <p className="text-slate-500 text-sm">
-              Production projects delivered at Johnson Controls — click any card for full details.
+            <p className="text-fnt text-sm">
+              Production projects delivered at Johnson Controls — open any card
+              for the full case.
             </p>
           </header>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {portfolioProjects.map(p => (
-              <PortfolioCard key={p.id} project={p} />
+            {portfolioProjects.map((p, i) => (
+              <PortfolioCard key={p.id} project={p} index={i} />
             ))}
           </div>
         </div>
@@ -258,24 +254,19 @@ export default function Projects() {
 
       {/* ── Featured GitHub repos ── */}
       {status !== 'error' && (
-        <section className="py-16 border-t border-white/[0.04]" aria-labelledby="featured-heading">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <header className="flex items-end justify-between mb-10 reveal">
-              <div>
-                <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-2">
-                  Highlighted work
-                </p>
-                <h2 id="featured-heading"
-                    className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-                  Featured
-                </h2>
-              </div>
-              <span className="text-sm text-slate-500 hidden sm:block">
+        <section className="py-16" aria-labelledby="featured-heading">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="node-rule fx-rule mb-8"><span>Featured</span></div>
+            <header className="flex items-end justify-between mb-10">
+              <h2 id="featured-heading" className="display text-3xl sm:text-4xl text-ink fx-head">
+                Featured repositories
+              </h2>
+              <span className="text-sm text-fnt hidden sm:block">
                 Curated from current public repositories
               </span>
             </header>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
               {status === 'loading'
                 ? <Skeletons count={3} tall />
                 : featured.map((p, i) => (
@@ -287,19 +278,61 @@ export default function Projects() {
         </section>
       )}
 
-      {/* ── All repos ── */}
+      {/* ── All repos — ledger index ── */}
       {status !== 'error' && (
-        <section className="py-16 border-t border-white/[0.04]" aria-labelledby="all-heading">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <header className="mb-10 reveal">
-              <p className="text-xs font-bold tracking-[0.14em] uppercase text-indigo-400 mb-2">
-                Complete list
-              </p>
-              <h2 id="all-heading"
-                  className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+        <section className="py-16" aria-labelledby="all-heading">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="node-rule fx-rule mb-8"><span>Complete index</span></div>
+            <header className="mb-8">
+              <h2 id="all-heading" className="display text-3xl sm:text-4xl text-ink fx-head">
                 All repositories
               </h2>
             </header>
+
+            {/* Search + sort controls */}
+            <div className="flex flex-wrap items-center gap-3 mb-4">
+              <div className="relative">
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-fnt pointer-events-none"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                     strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input
+                  type="search"
+                  value={query}
+                  onChange={e => setQuery(e.target.value)}
+                  placeholder="Filter by name, topic, description"
+                  aria-label="Filter repositories"
+                  className="w-72 max-w-full pl-9 pr-3 py-2 rounded-md text-sm
+                             bg-panel border border-line text-ink placeholder:text-fnt
+                             outline-none focus:border-signal transition-colors"
+                />
+              </div>
+
+              <div className="flex items-center rounded-md border border-line p-0.5"
+                   role="group" aria-label="Sort repositories">
+                {SORTS.map(s => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => setSortBy(s.id)}
+                    aria-pressed={sortBy === s.id}
+                    className={`px-3 py-1.5 rounded text-xs font-medium transition-colors
+                      ${sortBy === s.id
+                        ? 'bg-panel-hi text-ink'
+                        : 'text-fnt hover:text-ink'}`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+
+              {status === 'ready' && (
+                <span className="text-xs font-mono text-fnt ml-auto">
+                  {filtered.length} of {projects.length}
+                </span>
+              )}
+            </div>
 
             {/* Language filter */}
             {languages.length > 0 && (
@@ -307,11 +340,9 @@ export default function Projects() {
                 <button
                   type="button"
                   onClick={() => setActiveFilter('')}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs
-                              font-medium border transition-all duration-200
-                              ${activeFilter === ''
-                                ? 'bg-indigo-500/12 border-indigo-500/40 text-indigo-300'
-                                : 'bg-white/[0.03] border-white/[0.07] text-slate-400 hover:text-slate-100 hover:bg-indigo-500/8 hover:border-indigo-500/30'}`}
+                  className={`chip transition-colors ${activeFilter === ''
+                    ? 'chip-signal'
+                    : 'hover:text-ink hover:border-line-strong'}`}
                 >
                   All
                 </button>
@@ -320,13 +351,11 @@ export default function Projects() {
                     key={lang}
                     type="button"
                     onClick={() => setActiveFilter(lang === activeFilter ? '' : lang)}
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs
-                                font-medium border transition-all duration-200
-                                ${lang === activeFilter
-                                  ? 'bg-indigo-500/12 border-indigo-500/40 text-indigo-300'
-                                  : 'bg-white/[0.03] border-white/[0.07] text-slate-400 hover:text-slate-100 hover:bg-indigo-500/8 hover:border-indigo-500/30'}`}
+                    className={`chip transition-colors ${lang === activeFilter
+                      ? 'chip-signal'
+                      : 'hover:text-ink hover:border-line-strong'}`}
                   >
-                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                    <span className="w-2 h-2 rounded-full flex-shrink-0"
                           style={{ background: getLangColor(lang) }} />
                     {lang}
                   </button>
@@ -334,14 +363,29 @@ export default function Projects() {
               </nav>
             )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {status === 'loading'
-                ? <Skeletons count={8} />
-                : filtered.map((p, i) => (
-                    <ProjectCard key={p.id} project={p} index={i} />
-                  ))
-              }
-            </div>
+            {status === 'loading' ? (
+              <div className="space-y-2">
+                <Skeletons count={6} />
+              </div>
+            ) : filtered.length > 0 ? (
+              <div>
+                {filtered.map((p, i) => (
+                  <RepoRow key={p.id} project={p} index={i} />
+                ))}
+              </div>
+            ) : (
+              <div className="panel border-dashed p-8">
+                <p className="text-ink font-semibold mb-1">No repositories match</p>
+                <p className="text-sm text-mut mb-4">
+                  Nothing matches "{query.trim()}"{activeFilter ? ` in ${activeFilter}` : ''}.
+                </p>
+                <button type="button"
+                        onClick={() => { setQuery(''); setActiveFilter(''); }}
+                        className="tlink text-sm font-semibold">
+                  Clear filters
+                </button>
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -349,11 +393,13 @@ export default function Projects() {
       {/* Error state */}
       {status === 'error' && (
         <section className="py-32">
-          <div className="max-w-lg mx-auto px-4 text-center">
-            <p className="text-5xl mb-4 opacity-40" aria-hidden="true">📡</p>
-            <p className="text-slate-500">
-              Could not load repository data. Please try again later.
-            </p>
+          <div className="max-w-lg mx-auto px-4">
+            <div className="panel p-8">
+              <p className="text-ink font-semibold mb-1">Repository data didn't load</p>
+              <p className="text-mut text-sm">
+                GitHub may be unreachable right now. Reload the page to try again.
+              </p>
+            </div>
           </div>
         </section>
       )}

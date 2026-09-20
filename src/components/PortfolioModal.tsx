@@ -26,39 +26,35 @@ export function PortfolioModal({ project, open, onClose }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-4
-                 bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-4 bg-black/60"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-label={`Details for ${project.title}`}
     >
       <div
-        className="w-full max-w-2xl bg-[#0a1628] rounded-3xl max-h-[90vh] overflow-y-auto
-                   shadow-2xl animate-fade-up-1"
-        style={{ borderWidth: 1, borderStyle: 'solid', borderColor: `${project.accentFrom}30` }}
+        className="w-full max-w-2xl bg-panel border border-line-strong rounded-lg
+                   max-h-[90vh] overflow-y-auto animate-page-enter"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-start justify-between gap-4 p-6 pb-4
-                        bg-[#0a1628]"
-             style={{ borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: `${project.accentFrom}20` }}>
+                        bg-panel border-b border-line">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl grid place-items-center flex-shrink-0"
-                 style={{ background: `linear-gradient(135deg, ${project.accentFrom}, ${project.accentTo})` }}>
+            <div className="w-11 h-11 rounded-md border border-line grid place-items-center
+                            flex-shrink-0 text-signal">
               <PortfolioIcon icon={project.icon} />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-100">{project.title}</h2>
-              <p className="text-sm font-medium" style={{ color: project.accentFrom }}>
-                {project.company} · {project.period}
+              <h2 className="text-lg font-semibold text-ink">{project.title}</h2>
+              <p className="text-sm text-mut">
+                {project.company}, {project.period}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-500 hover:text-slate-100
-                       hover:bg-white/[0.06] transition-colors flex-shrink-0"
+            className="p-2 rounded text-fnt hover:text-ink transition-colors flex-shrink-0"
             aria-label="Close"
           >
             <XIcon />
@@ -68,18 +64,15 @@ export function PortfolioModal({ project, open, onClose }: Props) {
         {/* Body */}
         <div className="p-6 space-y-6">
 
-          <p className="text-slate-300 leading-relaxed">{project.shortDesc}</p>
+          <p className="text-mut leading-relaxed">{project.shortDesc}</p>
 
           {/* Bullet points */}
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-3">
-              What I built
-            </p>
+            <div className="node-rule mb-3"><span>What I built</span></div>
             <ul className="space-y-3">
               {project.bullets.map((b, i) => (
-                <li key={i} className="flex gap-3 text-sm text-slate-400 leading-relaxed">
-                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0"
-                        style={{ background: project.accentFrom }} />
+                <li key={i} className="flex gap-3 text-sm text-mut leading-relaxed">
+                  <span className="mt-2 w-1.5 h-1.5 flex-shrink-0 bg-signal" />
                   {b}
                 </li>
               ))}
@@ -88,20 +81,10 @@ export function PortfolioModal({ project, open, onClose }: Props) {
 
           {/* Tech tags */}
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-3">
-              Tech stack
-            </p>
+            <div className="node-rule mb-3"><span>Tech stack</span></div>
             <div className="flex flex-wrap gap-2">
               {project.tags.map(tag => (
-                <span key={tag}
-                  className="px-2.5 py-1 rounded-full text-xs border"
-                  style={{
-                    color: project.accentFrom,
-                    borderColor: `${project.accentFrom}30`,
-                    background: `${project.accentFrom}0a`,
-                  }}>
-                  {tag}
-                </span>
+                <span key={tag} className="chip">{tag}</span>
               ))}
             </div>
           </div>

@@ -1,12 +1,14 @@
+import { useRef, useState } from 'react';
 import type { ActivityDataset } from '../hooks/useActivity';
 
-// GitHub dark-mode contribution level colors — kept inline because they are dynamic (level 0–4 from data)
+// Sequential telemetry-green ramp — steps defined per theme in index.css
+// (validated ordinal ramp: monotone lightness, visible step gaps)
 const LEVEL_BG: Record<number, string> = {
-  0: 'rgba(255,255,255,0.05)',
-  1: '#0e4429',
-  2: '#006d32',
-  3: '#26a641',
-  4: '#39d353',
+  0: 'var(--cal-0)',
+  1: 'var(--cal-1)',
+  2: 'var(--cal-2)',
+  3: 'var(--cal-3)',
+  4: 'var(--cal-4)',
 };
 
 // Day labels: show Mon (1), Wed (3), Fri (5) only
@@ -20,8 +22,31 @@ interface Props {
   dataset: ActivityDataset;
 }
 
+interface Tip {
+  x: number;
+  y: number;
+  label: string;
+}
+
 export function ContributionCalendar({ dataset }: Props) {
   const { weeks, totalContributions, totalCommits, totalPRs, longestStreak, currentStreak } = dataset;
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [tip, setTip] = useState<Tip | null>(null);
+
+  const showTip = (e: React.MouseEvent<HTMLDivElement>, date: string, count: number) => {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    const cell = e.currentTarget.getBoundingClientRect();
+    const base = wrap.getBoundingClientRect();
+    const d = new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
+      month: 'short', day: 'numeric',
+    });
+    setTip({
+      x: cell.left - base.left + cell.width / 2,
+      y: cell.top - base.top,
+      label: `${count === 0 ? 'No' : count} contribution${count === 1 ? '' : 's'}, ${d}`,
+    });
+  };
 
   // Month labels: record the first column index where each month starts
   const monthLabels: { label: string; col: number }[] = [];
@@ -38,9 +63,19 @@ export function ContributionCalendar({ dataset }: Props) {
   const totalCols = weeks.length;
 
   return (
-    <div className="w-full">
+    <div className="w-full relative" ref={wrapRef}>
+      {/* Cell tooltip */}
+      {tip && (
+        <div className="absolute z-10 pointer-events-none -translate-x-1/2 -translate-y-full
+                        px-2.5 py-1.5 rounded-md border border-line-strong bg-panel-hi
+                        font-mono text-[11px] text-ink whitespace-nowrap shadow-lg"
+             style={{ left: tip.x, top: tip.y - 6 }}>
+          {tip.label}
+        </div>
+      )}
+
       {/* Scrollable grid — scrolls horizontally on mobile */}
-      <div className="overflow-x-auto pb-2 -mx-1 px-1">
+      <div className="overflow-x-auto pb-2 -mx-1 px-1" onMouseLeave={() => setTip(null)}>
         <div className="inline-flex gap-[3px]" style={{ minWidth: 'max-content' }}>
 
           {/* Day-of-week labels column */}
@@ -48,7 +83,7 @@ export function ContributionCalendar({ dataset }: Props) {
             {DAY_LABELS.map((label, i) => (
               <div
                 key={label}
-                className="w-6 h-[10px] text-right text-[8px] leading-[10px] text-slate-600 pr-1 select-none"
+                className="w-6 h-[10px] text-right text-[8px] leading-[10px] text-fnt pr-1 select-none"
               >
                 {DAY_LABEL_INDICES.has(i) ? label : ''}
               </div>
@@ -62,7 +97,7 @@ export function ContributionCalendar({ dataset }: Props) {
               {monthLabels.map(({ label, col }) => (
                 <span
                   key={`${label}-${col}`}
-                  className="absolute text-[9px] text-slate-500 select-none leading-none"
+                  className="absolute text-[9px] font-mono text-fnt select-none leading-none"
                   style={{ left: col * STEP }}
                 >
                   {label}
@@ -73,7 +108,8 @@ export function ContributionCalendar({ dataset }: Props) {
             {/* Cell grid */}
             <div className="flex gap-[3px]">
               {weeks.map((week, wi) => (
-                <div key={wi} className="flex flex-col gap-[3px]">
+                <div key={wi} className="flex flex-col gap-[3px] cal-col"
+                     style={{ '--fxd': `${wi * 14}ms` } as React.CSSProperties}>
                   {/* Pad days if week starts mid-week (first week of year) */}
                   {week.days.length < 7 &&
                     Array.from({ length: 7 - week.days.length }).map((_, pi) => (
@@ -83,10 +119,11 @@ export function ContributionCalendar({ dataset }: Props) {
                   {week.days.map((day, di) => (
                     <div
                       key={di}
-                      title={`${day.date} — ${day.count} contribution${day.count !== 1 ? 's' : ''}`}
+                      aria-label={`${day.date}: ${day.count} contribution${day.count !== 1 ? 's' : ''}`}
                       className="w-[10px] h-[10px] rounded-[2px] cursor-default flex-shrink-0
                                  transition-transform duration-150 hover:scale-125"
                       style={{ background: LEVEL_BG[day.level] }}
+                      onMouseEnter={e => showTip(e, day.date, day.count)}
                     />
                   ))}
                 </div>
@@ -99,7 +136,7 @@ export function ContributionCalendar({ dataset }: Props) {
       {/* Legend */}
       <div className="flex items-center justify-between mt-3 flex-wrap gap-3">
         <div className="flex items-center gap-1.5">
-          <span className="text-[9px] text-slate-600 mr-1 select-none">Less</span>
+          <span className="text-[9px] text-fnt mr-1 select-none">Less</span>
           {[0, 1, 2, 3, 4].map(level => (
             <div
               key={level}
@@ -107,15 +144,15 @@ export function ContributionCalendar({ dataset }: Props) {
               style={{ background: LEVEL_BG[level] }}
             />
           ))}
-          <span className="text-[9px] text-slate-600 ml-1 select-none">More</span>
+          <span className="text-[9px] text-fnt ml-1 select-none">More</span>
         </div>
-        <span className="text-[9px] text-slate-600 select-none">
+        <span className="text-[9px] font-mono text-fnt select-none">
           {new Date(dataset.generatedAt).getFullYear()} contribution activity
         </span>
       </div>
 
       {/* Stats row */}
-      <div className="flex flex-wrap gap-x-5 gap-y-2 mt-4 pt-4 border-t border-white/[0.05]">
+      <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 pt-4 border-t border-line">
         <CalStat value={totalContributions.toLocaleString()} label="total contributions" accent />
         <CalStat value={totalCommits.toLocaleString()} label="commits" />
         <CalStat value={totalPRs.toLocaleString()} label="pull requests" />
@@ -134,12 +171,12 @@ function CalStat({ value, label, accent, highlight }: {
 }) {
   return (
     <div className="flex items-baseline gap-1.5">
-      <span className={`text-sm font-bold tabular-nums ${
-        accent ? 'text-indigo-300' : highlight ? 'text-emerald-400' : 'text-slate-200'
+      <span className={`text-sm font-mono font-semibold tabular-nums ${
+        accent ? 'text-signal' : highlight ? 'text-tel' : 'text-ink'
       }`}>
         {value}
       </span>
-      <span className="text-xs text-slate-600">{label}</span>
+      <span className="text-xs text-fnt">{label}</span>
     </div>
   );
 }
