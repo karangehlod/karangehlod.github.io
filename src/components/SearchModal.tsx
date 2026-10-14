@@ -107,13 +107,13 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
   };
 
   return (
-    /* Backdrop — full-screen on mobile (no centering padding), centered on sm+ */
+    /* Backdrop - full-screen on mobile (no centering padding), centered on sm+ */
     <div
       className="fixed inset-0 z-[300] flex flex-col sm:flex-none sm:flex sm:items-start
                  sm:justify-center sm:pt-[10vh] sm:px-4 bg-black/60"
       onClick={onClose}
     >
-      {/* Modal — full-width sheet anchored to top on mobile, panel on sm+ */}
+      {/* Modal - full-width sheet anchored to top on mobile, panel on sm+ */}
       <div
         className="w-full sm:max-w-xl bg-panel overflow-hidden
                    rounded-b-lg sm:rounded-lg
@@ -143,7 +143,7 @@ export function SearchModal({ open, onClose, githubProjects }: Props) {
           </button>
         </div>
 
-        {/* Results — larger max-height on mobile to account for keyboard */}
+        {/* Results - larger max-height on mobile to account for keyboard */}
         <div className="max-h-[50vh] sm:max-h-80 overflow-y-auto overscroll-contain">
           {results.length === 0 ? (
             <p className="px-4 py-8 text-center text-sm text-fnt">

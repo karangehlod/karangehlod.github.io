@@ -235,7 +235,7 @@ export default function ProjectPage() {
             </div>
           )}
 
-          {/* CTAs — stack full-width on mobile, inline on sm+ */}
+          {/* CTAs - stack full-width on mobile, inline on sm+ */}
           <div className="flex flex-col sm:flex-row gap-3">
             <a href={project.url} target="_blank" rel="noopener noreferrer"
                className="btn btn-primary">

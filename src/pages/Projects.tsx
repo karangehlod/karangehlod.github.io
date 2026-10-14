@@ -83,20 +83,20 @@ export default function Projects() {
           </h1>
           <p className="text-lg text-mut leading-relaxed max-w-[56ch] mb-8 fx-rise" style={{ '--fxd': '150ms' } as React.CSSProperties}>
             Every public repository, discovered live from the GitHub API at each
-            build — no stale lists and no manual curation.
+            build - no stale lists and no manual curation.
           </p>
 
           {/* Inline readout facts */}
           <dl className="flex flex-wrap gap-x-10 gap-y-4 border-y border-line py-4 max-w-2xl fx-rise" style={{ '--fxd': '250ms' } as React.CSSProperties}>
             <div>
               <dd className="font-mono text-xl font-semibold text-ink tabular-nums">
-                {status === 'ready' ? projects.length : '—'}
+                {status === 'ready' ? projects.length : '-'}
               </dd>
               <dt className="text-xs text-fnt">repositories</dt>
             </div>
             <div>
               <dd className="font-mono text-xl font-semibold text-ink tabular-nums">
-                {status === 'ready' ? langCount : '—'}
+                {status === 'ready' ? langCount : '-'}
               </dd>
               <dt className="text-xs text-fnt">languages</dt>
             </div>
@@ -130,7 +130,7 @@ export default function Projects() {
                   Contributions to external projects
                 </h2>
                 <p className="text-fnt text-sm max-w-[60ch]">
-                  Merged pull requests to repositories I don't own — real code
+                  Merged pull requests to repositories I don't own - real code
                   shipped to tools other developers depend on.
                 </p>
               </div>
@@ -240,7 +240,7 @@ export default function Projects() {
               Portfolio projects
             </h2>
             <p className="text-fnt text-sm">
-              Production projects delivered at Johnson Controls — open any card
+              Production projects delivered at Johnson Controls - open any card
               for the full case.
             </p>
           </header>
@@ -278,7 +278,7 @@ export default function Projects() {
         </section>
       )}
 
-      {/* ── All repos — ledger index ── */}
+      {/* ── All repos - ledger index ── */}
       {status !== 'error' && (
         <section className="py-16" aria-labelledby="all-heading">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">

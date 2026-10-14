@@ -18,6 +18,10 @@ const PUB  = new URL('../public/publications.json', import.meta.url);
 const raw  = readFileSync(SRC, 'utf8');
 const { data, content } = matter(raw);
 
+if ('phone' in (data.personal ?? {}) || 'dob' in (data.personal ?? {})) {
+  throw new Error('Remove private contact and birth information from profile.md before generating public content.');
+}
+
 const output = {
   ...data,
   summaryMarkdown: content.replace(/^##\s+Summary\s*/i, '').trim(),
@@ -32,7 +36,7 @@ console.log('Content: wrote public/content.json');
 const orcid = data.social?.orcid?.trim();
 
 if (!orcid) {
-  console.log('Publications: no ORCID set — skipping. Add `orcid: "0000-0002-XXXX-XXXX"` to content/profile.md to enable.');
+  console.log('Publications: no ORCID set - skipping. Add `orcid: "0000-0002-XXXX-XXXX"` to content/profile.md to enable.');
   writeFileSync(PUB, JSON.stringify({ works: [], fetchedAt: new Date().toISOString() }) + '\n');
 } else {
   console.log(`Publications: fetching ORCID ${orcid}…`);
@@ -69,7 +73,7 @@ if (!orcid) {
     writeFileSync(PUB, JSON.stringify({ works, fetchedAt: new Date().toISOString() }, null, 2) + '\n');
     console.log(`Publications: wrote ${works.length} works to public/publications.json`);
   } catch (err) {
-    console.warn(`Publications: ORCID fetch failed — ${err.message}. Writing empty list.`);
+    console.warn(`Publications: ORCID fetch failed - ${err.message}. Writing empty list.`);
     writeFileSync(PUB, JSON.stringify({ works: [], fetchedAt: new Date().toISOString(), error: err.message }) + '\n');
   }
 }

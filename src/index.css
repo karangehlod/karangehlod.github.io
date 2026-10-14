@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════════
-   Closed loop — design tokens
+   Closed loop - design tokens
    Dark  = control room (default)
    Light = drafting sheet
 ═══════════════════════════════════════════════════════════════ */
@@ -24,7 +24,7 @@ html.dark {
   --telemetry-dim: rgba(95, 184, 148, 0.14);
   --alert:       #E17575;
 
-  /* Contribution calendar ramp — validated ordinal, dark surface */
+  /* Contribution calendar ramp - validated ordinal, dark surface */
   --cal-0: #1D3236;
   --cal-1: #2C684E;
   --cal-2: #47936B;
@@ -50,7 +50,7 @@ html.light {
   --telemetry-dim: rgba(46, 125, 91, 0.12);
   --alert:       #B23E3E;
 
-  /* Contribution calendar ramp — validated ordinal, light surface */
+  /* Contribution calendar ramp - validated ordinal, light surface */
   --cal-0: #E0E6DF;
   --cal-1: #74B78E;
   --cal-2: #4E9670;
@@ -97,7 +97,7 @@ html.light {
 
 /* ─── Utilities ─────────────────────────────────────────────── */
 @layer utilities {
-  /* Display type: Archivo at expanded width — panel-signage voice */
+  /* Display type: Archivo at expanded width - panel-signage voice */
   .display {
     font-stretch: 118%;
     font-weight: 700;
@@ -150,7 +150,7 @@ html.light {
     white-space: nowrap;
   }
 
-  /* Buttons — rectangular, flat, tactile on press */
+  /* Buttons - rectangular, flat, tactile on press */
   .btn {
     display: inline-flex;
     align-items: center;
@@ -185,7 +185,7 @@ html.light {
     color: var(--signal);
   }
 
-  /* Text link — underlined, no appended arrows */
+  /* Text link - underlined, no appended arrows */
   .tlink {
     color: var(--signal);
     text-decoration: underline;
@@ -197,7 +197,7 @@ html.light {
     text-decoration-color: var(--signal);
   }
 
-  /* Panels — flat surfaces, border carries the structure */
+  /* Panels - flat surfaces, border carries the structure */
   .panel {
     background: var(--panel);
     border: 1px solid var(--line);
@@ -248,7 +248,7 @@ html.light {
     border-bottom-left-radius: 0;
   }
 
-  /* Ledger row — the all-repositories index */
+  /* Ledger row - the all-repositories index */
   .ledger-row {
     display: block;
     position: relative;
@@ -279,7 +279,7 @@ html.light {
     transform: scaleY(1);
   }
 
-  /* Chip — small squared tag */
+  /* Chip - small squared tag */
   .chip {
     display: inline-flex;
     align-items: center;
@@ -293,7 +293,7 @@ html.light {
     background: transparent;
   }
 
-  /* Status chip — merged / live / featured states */
+  /* Status chip - merged / live / featured states */
   .chip-ok {
     border-color: color-mix(in srgb, var(--telemetry) 40%, transparent);
     background: var(--telemetry-dim);
@@ -324,7 +324,7 @@ html.light {
     color: var(--faint);
   }
 
-  /* Drafting grid — hero region only */
+  /* Drafting grid - hero region only */
   .draft-grid {
     position: absolute;
     inset: 0;
@@ -337,7 +337,7 @@ html.light {
     -webkit-mask-image: radial-gradient(ellipse 80% 70% at 60% 40%, black, transparent);
   }
 
-  /* Skeleton loading — flat shimmer */
+  /* Skeleton loading - flat shimmer */
   .skeleton {
     border: 1px solid var(--line);
     border-radius: 8px;
@@ -410,7 +410,7 @@ html.light {
     offset-rotate: 0deg;
   }
 
-  /* Hero entrance — the single page-load sequence */
+  /* Hero entrance - the single page-load sequence */
   .hero-enter   { opacity: 0; animation: rise-in 0.7s var(--ease-out) forwards; }
   .hero-enter-1 { animation-delay: 0.05s; }
   .hero-enter-2 { animation-delay: 0.18s; }

@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import type { ActivityDataset } from '../hooks/useActivity';
 
-// Sequential telemetry-green ramp — steps defined per theme in index.css
+// Sequential telemetry-green ramp - steps defined per theme in index.css
 // (validated ordinal ramp: monotone lightness, visible step gaps)
 const LEVEL_BG: Record<number, string> = {
   0: 'var(--cal-0)',
@@ -74,7 +74,7 @@ export function ContributionCalendar({ dataset }: Props) {
         </div>
       )}
 
-      {/* Scrollable grid — scrolls horizontally on mobile */}
+      {/* Scrollable grid - scrolls horizontally on mobile */}
       <div className="overflow-x-auto pb-2 -mx-1 px-1" onMouseLeave={() => setTip(null)}>
         <div className="inline-flex gap-[3px]" style={{ minWidth: 'max-content' }}>
 
@@ -92,7 +92,7 @@ export function ContributionCalendar({ dataset }: Props) {
 
           {/* Weeks grid */}
           <div className="flex flex-col">
-            {/* Month labels row — uses inline left: for computed column position */}
+            {/* Month labels row - uses inline left: for computed column position */}
             <div className="relative h-[13px] mb-[2px]" style={{ width: totalCols * STEP }}>
               {monthLabels.map(({ label, col }) => (
                 <span

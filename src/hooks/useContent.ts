@@ -8,8 +8,6 @@ export interface Personal {
   summary_tagline: string;
   location: string;
   email: string;
-  phone?: string;
-  dob?: string;
 }
 
 export interface Social {
@@ -31,6 +29,8 @@ export interface ExperienceItem {
   title: string;
   company: string;
   period: string;
+  rolePeriod?: string;
+  previousRole?: string;
   location: string;
   color: string;
   bullets: string[];

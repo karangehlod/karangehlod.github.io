@@ -12,7 +12,7 @@ import { getLangColor, formatMonth } from '../utils/languageColors';
 /* Readout value that counts up once its data is ready */
 function CountValue({ value, ready }: { value: number; ready: boolean }) {
   const n = useCountUp(value, ready);
-  return <>{ready ? n.toLocaleString() : '—'}</>;
+  return <>{ready ? n.toLocaleString() : '-'}</>;
 }
 
 /* ── Section node navigation (xl desktops only) ──────────────── */
@@ -82,7 +82,7 @@ const LOOP_BOXES = [
   { x: 260, y: 258, title: 'Decision', sub: 'agents',
     desc: 'Multi-agent orchestration turns model output into executable plans.' },
   { x: 50,  y: 258, title: 'Control',  sub: 'act',
-    desc: 'Actions run against live infrastructure — and feed back in as data.' },
+    desc: 'Actions run against live infrastructure - and feed back in as data.' },
 ];
 
 function LoopSchematic() {
@@ -93,7 +93,7 @@ function LoopSchematic() {
     <div>
       <svg viewBox="0 0 420 340" className="w-full" role="img"
            aria-label="Closed-loop system diagram: data to model to decision to control, and back to data">
-        {/* The loop wire — draws itself on load */}
+        {/* The loop wire - draws itself on load */}
         <path className="loop-wire loop-draw" d="M105,60 H315 V280 H105 Z" />
 
         {/* Signal pulse orbiting the loop (under the boxes) */}
@@ -108,7 +108,7 @@ function LoopSchematic() {
           <polygon points="100,175 105,165 110,175" />
         </g>
 
-        {/* Stage boxes — hover, tap, or focus to inspect */}
+        {/* Stage boxes - hover, tap, or focus to inspect */}
         {LOOP_BOXES.map((b, i) => (
           <g key={b.title}
              className={`loop-node loop-fade loop-fade-${i + 1} ${active === b.title ? 'on' : ''}`}
@@ -132,7 +132,7 @@ function LoopSchematic() {
         </text>
       </svg>
 
-      {/* Stage inspector — reads out whichever stage is selected */}
+      {/* Stage inspector - reads out whichever stage is selected */}
       <p className="mt-3 min-h-[2.5rem] px-2 font-mono text-xs leading-relaxed text-fnt"
          aria-live="polite">
         {stage ? (
@@ -242,7 +242,7 @@ export default function Home() {
     <>
 
       {/* ═══════════════════════════════════════════════════════
-          1 · HERO — name as the system under control
+          1 · HERO - name as the system under control
       ══════════════════════════════════════════════════════════ */}
       <section id="sec-hero"
                className="snap-section-full relative flex flex-col justify-center overflow-hidden"
@@ -284,7 +284,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right: the loop — visible on every screen size */}
+          {/* Right: the loop - visible on every screen size */}
           <div className="flex justify-center lg:justify-end hero-enter hero-enter-3">
             <div className="w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[420px]">
               <LoopSchematic />
@@ -299,7 +299,7 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════
-          2 · WHO I AM — photo left, identity right
+          2 · WHO I AM - photo left, identity right
       ══════════════════════════════════════════════════════════ */}
       <section id="sec-about"
                className="snap-section-full overflow-hidden"
@@ -334,25 +334,26 @@ export default function Home() {
               </h2>
               <p className="text-signal font-medium text-lg fx-rise"
                  style={{ '--fxd': '150ms' } as React.CSSProperties}>
-                Karan Gehlod — Senior AI engineer, Johnson Controls
+                Karan Gehlod - Senior AI engineer, Johnson Controls
               </p>
             </div>
 
             <p className="text-mut text-lg leading-relaxed max-w-[52ch] fx-rise"
                style={{ '--fxd': '250ms' } as React.CSSProperties}>
-              I design the AI layer for smart-building platforms — multi-agent
+              I design the AI layer for smart-building platforms - multi-agent
               orchestration, RAG pipelines, and cloud-native architecture with
-              feedback loops closing over real infrastructure. That work has
-              delivered <strong className="text-ink font-semibold">$250K+ in measured impact</strong>.
+              feedback loops closing over real infrastructure. My cloud work delivered
+              <strong className="text-ink font-semibold"> $150K in realised AKS savings</strong>;
+              SmartRCA automation impact is estimated separately at $150K per year.
             </p>
 
-            {/* Facts row — machine values in mono */}
+            {/* Facts row - machine values in mono */}
             <dl className="flex flex-wrap gap-x-10 gap-y-4 border-y border-line py-4 fx-rise"
                 style={{ '--fxd': '350ms' } as React.CSSProperties}>
               {[
-                { val: '$250K+', label: 'business impact' },
-                { val: '5+',     label: 'years in AI'     },
-                { val: '15+',    label: 'public repos'    },
+                { val: '$150K', label: 'realised AKS savings' },
+                { val: '5+',    label: 'years of experience' },
+                { val: '3',     label: 'A2A business units' },
               ].map(({ val, label }) => (
                 <div key={label}>
                   <dd className="font-mono text-xl font-semibold text-ink tabular-nums">{val}</dd>
@@ -390,7 +391,7 @@ export default function Home() {
               </h2>
               <p className="text-mut text-lg max-w-[52ch] leading-relaxed fx-rise"
                  style={{ '--fxd': '150ms' } as React.CSSProperties}>
-                Each one solves a real problem in production AI — benchmarks,
+                Each one solves a real problem in production AI - benchmarks,
                 protocols, and pipelines, not toys.
               </p>
             </header>
@@ -428,7 +429,7 @@ export default function Home() {
               <p className="text-mut text-lg max-w-[56ch] leading-relaxed fx-rise"
                  style={{ '--fxd': '150ms' } as React.CSSProperties}>
                 Merged pull requests to external projects{totalAdditions > 0 && (
-                  <> — <span className="font-mono text-tel">+{totalAdditions.toLocaleString()}</span> lines</>
+                  <> - <span className="font-mono text-tel">+{totalAdditions.toLocaleString()}</span> lines</>
                 )} shipped to tools other developers depend on.
               </p>
               <Link to="/projects" className="tlink inline-block mt-4 text-sm font-semibold">

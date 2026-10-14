@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { experience, skillGroups, certifications, awards } from '../data/resumeData';
+import { experience, skillGroups, certifications, awards, professionalSummary, leadershipSummary } from '../data/resumeData';
 import { BadgeIcon } from '../components/Icons';
 
 export default function About() {
@@ -13,7 +13,7 @@ export default function About() {
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-10 lg:gap-20 items-center">
 
-            {/* Photo — squared, drafting-frame corners */}
+            {/* Photo - squared, drafting-frame corners */}
             <div className="flex justify-start">
               <img src="/profile_image.png"
                    alt="Karan Gehlod, Senior AI Engineer"
@@ -30,16 +30,17 @@ export default function About() {
                 Karan Gehlod
               </h1>
               <p className="text-lg sm:text-xl text-mut leading-relaxed mb-8 max-w-[52ch] fx-rise" style={{ '--fxd': '150ms' } as React.CSSProperties}>
-                Senior AI engineer specialising in production autonomous systems —
+                Senior AI engineer specialising in production autonomous systems -
                 multi-agent orchestration, RAG pipelines, and cloud-native AI
-                platforms. Delivered <strong className="text-ink font-semibold">$250K+
-                impact</strong> at Johnson Controls.
+                platforms. Delivered <strong className="text-ink font-semibold">$150K
+                in realised AKS savings</strong> at Johnson Controls, with automation
+                impact estimated separately.
               </p>
 
               {/* Contact facts */}
               <div className="flex flex-wrap gap-2">
                 {[
-                  { label: 'Indore, India' },
+                  { label: 'Bengaluru, India' },
                   { label: 'karan.gehlod@gmail.com', href: 'mailto:karan.gehlod@gmail.com' },
                   { label: 'github.com/karangehlod', href: 'https://github.com/karangehlod', external: true },
                   { label: 'medium.com/@theprodsde', href: 'https://medium.com/@theprodsde', external: true },
@@ -65,17 +66,12 @@ export default function About() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="node-rule fx-rule mb-8"><span>Summary</span></div>
           <p className="text-lg sm:text-xl text-mut leading-relaxed max-w-[62ch] fx-rise">
-            I design end-to-end AI platforms: system boundaries, API contracts,
-            and closed-loop feedback — data to model to decision to control.
-            That means multi-agent orchestration with <strong className="text-ink font-semibold">A2A
-            and LangGraph</strong>, real-time control architectures, and cloud-native
-            platforms on <strong className="text-ink font-semibold">AKS and Kubernetes</strong>,
-            taken from prototype to production.
+            {professionalSummary} {leadershipSummary}
           </p>
         </div>
       </section>
 
-      {/* ── Experience — a real sequence, drawn as a timeline wire ── */}
+      {/* ── Experience - a real sequence, drawn as a timeline wire ── */}
       <section className="py-16" aria-labelledby="exp-heading">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="node-rule fx-rule mb-8"><span>Career</span></div>
@@ -94,6 +90,8 @@ export default function About() {
                   <div>
                     <h3 className="text-xl font-semibold text-ink">{exp.title}</h3>
                     <p className="font-medium text-signal mt-0.5">{exp.company}</p>
+                    {exp.rolePeriod && <p className="text-sm text-mut mt-1">Current role: {exp.rolePeriod}</p>}
+                    {exp.previousRole && <p className="text-sm text-fnt mt-1">Previously: {exp.previousRole}</p>}
                   </div>
                   <div className="flex flex-col sm:items-end gap-0.5 flex-shrink-0">
                     <span className="text-sm font-mono text-mut">{exp.period}</span>

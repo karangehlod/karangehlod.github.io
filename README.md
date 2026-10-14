@@ -1,4 +1,4 @@
-# Karan Gehlod — Portfolio
+# Karan Gehlod - Portfolio
 
 Personal portfolio built with **Vite + React + TypeScript + Tailwind CSS**, deployed to GitHub Pages.
 
@@ -24,13 +24,23 @@ Open **http://localhost:5173**
 
 ## Updating your profile
 
-All content lives in **one file**:
+The existing layout, themes, navigation and project modals are preserved. Resume
+updates are reflected in `content/profile.md`, `src/data/resumeData.ts` and
+`src/data/portfolioProjects.ts`; keep these aligned when editing professional
+information. The latest resume distinguishes realised AKS savings, estimated
+SmartRCA automation impact and projected Monarch licensing savings.
+
+Only public professional contact information belongs in the profile. Private
+contact and birth information must not be included; content generation rejects
+these fields. Never copy the original resume attachment into `public/`.
+
+Public contact settings and generated profile content live here:
 
 ```
 content/profile.md
 ```
 
-Edit it — bio, experience, skills, certifications, portfolio projects, social links — then rebuild:
+Edit it - bio, experience, skills, certifications, portfolio projects, social links - then rebuild:
 
 ```bash
 npm run build:content   # regenerates public/content.json
@@ -118,11 +128,11 @@ git push origin main
 ```
 
 GitHub Actions will automatically:
-1. `npm ci` — install dependencies
-2. `npm test` — run tests
-3. `npm run build:data` — fetch live GitHub repos
-4. `npm run build:content` — parse profile.md + fetch ORCID publications
-5. `tsc -b && vite build` — TypeScript check + production build
+1. `npm ci` - install dependencies
+2. `npm test` - run tests
+3. `npm run build:data` - fetch live GitHub repos
+4. `npm run build:content` - parse profile.md + fetch ORCID publications
+5. `tsc -b && vite build` - TypeScript check + production build
 6. Deploy `dist/` to GitHub Pages
 
 ---
@@ -138,7 +148,7 @@ GitHub Actions will automatically:
 | ORCID publications | Fetched at build time from ORCID public API |
 | Portfolio projects | 6 Johnson Controls projects with full bullet-point modals |
 | Social links | GitHub, LinkedIn, Twitter/X, Medium, Reddit, ORCID |
-| Schedule a Call | Cal.com (free) — sign up at cal.com with your GitHub account |
+| Schedule a Call | Cal.com (free) - sign up at cal.com with your GitHub account |
 | Buy Me Coffee | PayPal.me link |
 
 ---

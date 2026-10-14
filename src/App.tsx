@@ -96,7 +96,7 @@ function Layout() {
   return (
     <div className="min-h-screen bg-ground text-ink">
       <Nav />
-      {/* SectionDots lives here — outside AnimatedPage so transform on page-enter never breaks fixed positioning */}
+      {/* SectionDots lives here - outside AnimatedPage so transform on page-enter never breaks fixed positioning */}
       {pathname === '/' && <SectionDots />}
       <main>
         <ScrollToTop />

@@ -8,7 +8,7 @@ interface Props {
   index?: number;
 }
 
-/* Panel treatment — featured repositories */
+/* Panel treatment - featured repositories */
 export function ProjectCard({ project, index = 0 }: Props) {
   const langColor = getLangColor(project.language);
   const date      = formatMonth(project.pushedAt || project.updatedAt);
@@ -90,7 +90,7 @@ export function ProjectCard({ project, index = 0 }: Props) {
   );
 }
 
-/* Ledger treatment — the all-repositories index */
+/* Ledger treatment - the all-repositories index */
 export function RepoRow({ project, index = 0 }: Props) {
   const langColor = getLangColor(project.language);
   const date      = formatMonth(project.pushedAt || project.updatedAt);

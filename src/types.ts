@@ -48,6 +48,8 @@ export interface Experience {
   title: string;
   company: string;
   period: string;
+  rolePeriod?: string;
+  previousRole?: string;
   location: string;
   bullets: string[];
   accentColor: string;

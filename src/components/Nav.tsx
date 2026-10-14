@@ -65,7 +65,7 @@ const NAV_LINKS = [
   { to: '/publications', label: 'Publications' },
 ] as const;
 
-/* Mark: a terminal prompt — mono "kg" with a live cursor block */
+/* Mark: a terminal prompt - mono "kg" with a live cursor block */
 function LogoMark() {
   return (
     <span className="font-mono text-xl font-semibold text-ink leading-none select-none
